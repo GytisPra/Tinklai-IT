@@ -13,6 +13,9 @@ class RegisterController
     // Display the registration form
     public function showRegisterForm()
     {
+        if (isUserLoggedIn()) {
+            header("Location: /dashboard");
+        }
         include 'app/views/register.html';
     }
 

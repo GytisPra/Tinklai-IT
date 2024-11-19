@@ -79,21 +79,37 @@ class User
     // Method to authenticate a user (login)
     public function authenticate($username, $password)
     {
-        $hash = '';
+        // Declare variables to avoid IDE warnings
+        $id = null;
+        $fetchedUsername = null;
+        $hashedPassword = null;
 
-        // Fetch the stored hashed password from the database
-        $stmt = $this->mysqli->prepare("SELECT password FROM user WHERE username = ?");
+        // Prepare the SQL statement
+        $stmt = $this->mysqli->prepare("SELECT id, username, password FROM user WHERE username = ?");
+        if (!$stmt) {
+            throw new Exception("Database query error: " . $this->mysqli->error);
+        }
+
+        // Bind and execute the query
         $stmt->bind_param("s", $username);
         $stmt->execute();
-        $stmt->bind_result($hash);
-        $stmt->fetch();
-        $stmt->close();
 
-        if (password_verify($password, $hash)) {
-            return true; // Authentication successful
-        } else {
-            return false; // Authentication failed
+        // Bind result variables
+        $stmt->bind_result($id, $fetchedUsername, $hashedPassword);
+        if ($stmt->fetch()) {
+            // Check the password against the hash
+            if ($hashedPassword && password_verify($password, $hashedPassword)) {
+                $stmt->close();
+                return [
+                    'id' => $id,
+                    'username' => $fetchedUsername
+                ];
+            }
         }
+
+        // Close the statement and return false if authentication failed
+        $stmt->close();
+        return false;
     }
 
 

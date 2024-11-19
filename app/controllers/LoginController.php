@@ -1,6 +1,4 @@
 <?php
-// /app/controllers/RegisterController.php
-
 class LoginController
 {
     private $userModel;
@@ -13,6 +11,11 @@ class LoginController
     // Display the registration form
     public function showLoginForm()
     {
+        if (isUserLoggedIn()) {
+            header("Location: /dashboard");
+            exit;
+        }
+
         include 'app/views/login.html';
     }
 
@@ -32,13 +35,24 @@ class LoginController
             }
 
             try {
-                if ($this->userModel->authenticate($username, $password)) {
-                    echo "Authenticated successfully!";
+                $authResult = $this->userModel->authenticate($username, $password);
+                if ($authResult) {
+                    // Store user info in session
+                    $_SESSION['user'] = $authResult;
+                    header("Location: /dashboard");
+                    exit;
                 } else {
-                    echo "Incorrect password or username!";
+                    // Handle failed authentication
+                    $_SESSION['error'] = "Invalid username or password";
+                    header("Location: /login");
+                    exit;
                 }
             } catch (Exception $e) {
-                echo $e->getMessage();
+                // Log error and show a user-friendly message
+                error_log($e->getMessage());
+                $_SESSION['error'] = "An error occurred. Please try again later.";
+                header("Location: /login");
+                exit;
             }
         }
     }
