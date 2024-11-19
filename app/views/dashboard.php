@@ -9,7 +9,6 @@
     <style>
         body {
             height: 100vh;
-            background-color: #343a40;
         }
 
         .custom-container {
@@ -23,10 +22,24 @@
             margin-top: 1.5rem;
             color: white
         }
+
+        a {
+            text-decoration: none;
+            cursor: pointer;
+            color: white;
+        }
+
+        a:hover,
+        a:hover span,
+        a:hover svg {
+            color: lightblue;
+            stroke: lightblue;
+            transition: all .1s ease-out;
+        }
     </style>
 </head>
 
-<body>
+<body data-bs-theme="dark" class="text-white">
     <?php include 'app/views/header.php'; ?>
 
     <!-- Container -->

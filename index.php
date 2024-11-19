@@ -13,6 +13,8 @@ require_once 'app/controllers/RegisterController.php';
 require_once 'app/controllers/LoginController.php';
 require_once 'app/controllers/LogoutController.php';
 require_once 'app/controllers/DashboardController.php';
+require_once 'app/controllers/BaseController.php';
+
 
 require_once 'config/config.php';
 require_once 'app/utils/utils.php';
@@ -34,6 +36,8 @@ $registerController = new RegisterController($userModel);
 $loginController = new LoginController($userModel);
 $dashboardController = new DashboardController();
 $logoutController = new LogoutController();
+$baseController = new BaseController();
+
 
 // Routing logic (simplified)
 $request = trim($_SERVER['REQUEST_URI'], '/');
@@ -45,6 +49,7 @@ $routes = [
     'login/submit' => [$loginController, 'processLoginForm'],
     'logout' => [$logoutController, 'logout'],
     'dashboard' => [$dashboardController, 'showDashboard'],
+    'create-base' => [$baseController, 'showBaseCreationForm']
 ];
 
 if (array_key_exists($request, $routes)) {

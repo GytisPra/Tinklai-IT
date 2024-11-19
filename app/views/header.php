@@ -1,18 +1,6 @@
 <!-- Header -->
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
+<nav class="navbar navbar-expand-lg navbar-light text-white" style="background-color: #343a40">
     <style>
-        a {
-            color: white;
-            text-decoration: none;
-        }
-
-        a:hover span,
-        a:hover svg {
-            color: lightblue;
-            stroke: lightblue;
-            transition: all .1s ease-out;
-        }
-
         .button-group {
             display: flex;
             align-items: center;
@@ -27,9 +15,10 @@
             font-weight: bold;
         }
     </style>
+
     <div class="container-fluid">
         <!-- Left Side: Brand -->
-        <a class="navbar-brand text-white" href="#">Konstruktorius</a>
+        <a class="navbar-brand " href="/dashboard">Konstruktorius</a>
 
         <!-- Burger Menu for Small Screens -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +40,7 @@
                             <?php include 'assets/icons/profile-icon.svg' ?>
                             <span>Prisijungti</span>
                         </a>
-                        <span class="mx-2 text-white">|</span>
+                        <span class="mx-2">|</span>
                         <a href="/register" class="text-decoration-none">
                             <span>Registruotis</span>
                         </a>
