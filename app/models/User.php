@@ -37,8 +37,6 @@ class User
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $currDate = date('Y-m-d H:i:s');
 
-        echo $hashedPassword . "<br>";
-
         // Prepare and execute the SQL query to insert the user into the database
         $stmt = $this->mysqli->prepare(
             "INSERT INTO user (name, lastname, phone_number, email, username, password, createdAt, updatedAt) 

@@ -8,12 +8,16 @@ error_reporting(E_ALL);
 
 // Include necessary files
 require_once 'app/models/User.php';
+require_once 'app/models/Base.php';
+require_once 'app/models/Part.php';
 
 require_once 'app/controllers/RegisterController.php';
 require_once 'app/controllers/LoginController.php';
 require_once 'app/controllers/LogoutController.php';
 require_once 'app/controllers/DashboardController.php';
+require_once 'app/controllers/DeviceController.php';
 require_once 'app/controllers/BaseController.php';
+require_once 'app/controllers/PartController.php';
 
 
 require_once 'config/config.php';
@@ -36,11 +40,14 @@ $registerController = new RegisterController($userModel);
 $loginController = new LoginController($userModel);
 $dashboardController = new DashboardController();
 $logoutController = new LogoutController();
+$deviceController = new DeviceController();
 $baseController = new BaseController();
+$partController = new PartController();
 
 
-// Routing logic (simplified)
-$request = trim($_SERVER['REQUEST_URI'], '/');
+
+$request = parse_url(trim($_SERVER['REQUEST_URI'], '/'), PHP_URL_PATH); // Parse the URI path
+$query = $_GET; // Capture query parameters like 'id'
 
 $routes = [
     'register' => [$registerController, 'showRegisterForm'],
@@ -49,11 +56,16 @@ $routes = [
     'login/submit' => [$loginController, 'processLoginForm'],
     'logout' => [$logoutController, 'logout'],
     'dashboard' => [$dashboardController, 'showDashboard'],
-    'create-base' => [$baseController, 'showBaseCreationForm']
+    'create-device' => [$deviceController, 'showDeviceCreationForm'],
+    'create-base' => [$baseController, 'showBaseCreationForm'],
+    'create-base/submit' => [$baseController, 'processBaseCreationForm'],
+    'get-base' => [$baseController, 'getBaseData'],
+    'get-parts' => [$partController, 'getPartsList'],
+    'get-base-list' => [$baseController, 'getAllBases'],
 ];
 
 if (array_key_exists($request, $routes)) {
-    call_user_func($routes[$request]);
+    call_user_func($routes[$request], $query);
 } else if ($request === "index.php" || empty($request)) {
     header('Location: /dashboard');
 } else {

@@ -4,23 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bazės sukurimas</title>
+    <title>Bazės sukūrimas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             height: 100vh;
-        }
-
-        .custom-container {
-            --bs-gutter-x: 1.5rem;
-            --bs-gutter-y: 0;
-            width: 100%;
-            padding-right: calc(var(--bs-gutter-x)* .5);
-            padding-left: calc(var(--bs-gutter-x)* .5);
-            margin-right: auto;
-            margin-left: auto;
-            margin-top: 1.5rem;
-            color: white
         }
 
         a {
@@ -36,6 +24,18 @@
             stroke: lightblue;
             transition: all .1s ease-out;
         }
+
+        select.no-border {
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
+            padding-left: 0.5rem;
+        }
+
+        input.no-shadow {
+            box-shadow: none;
+            background-color: transparent;
+        }
     </style>
 </head>
 
@@ -47,71 +47,35 @@
 
         <form method="POST" action="/create-base/submit">
             <div class="row">
-                <div class="mb-3 col form-group">
-                    <label for="description" class="form-label">Aprašymas</label>
-                    <textarea class="form-control bg-dark text-white" id="description" rows="3"></textarea>
-                </div>
-                <div class="mb-3 col">
-                    <label for="cost" class="form-label">Kaina</label>
-                    <input
-                        type="text"
-                        class="form-control bg-dark text-white"
-                        id="cost"
-                        name="cost"
-                        required />
-                </div>
                 <div class="row">
                     <div class="mb-3 col">
-                        <label for="motherboard_options" class="form-label text-white text-nowrap">Pasirinkti motininę plokštę</label>
-                        <select class="form-select bg-dark text-white" id="motherboard_options" aria-label="Motherboard selection">
-                            <option value="1">TEST</option>
-                            <option value="2">TEST</option>
-                            <option value="3">TEST</option>
-                            <option value="4">TEST</option>
-                            <option value="5">TEST</option>
-                            <option value="6">TEST</option>
-                        </select>
+                        <label for="name" class="form-label">Pavadinimas</label>
+                        <input
+                            type="text"
+                            class="form-control bg-dark text-white"
+                            id="name"
+                            name="name"
+                            required />
                     </div>
                     <div class="mb-3 col">
-                        <label for="graphic_options" class="form-label text-white text-nowrap">Pasirinkti vaizdo plokštę</label>
-                        <select class="form-select bg-dark text-white" id="graphic_options" aria-label="Graphics card selection">
-                            <option value="1">TEST</option>
-                            <option value="2">TEST</option>
-                            <option value="3">TEST</option>
-                            <option value="4">TEST</option>
-                            <option value="5">TEST</option>
-                            <option value="6">TEST</option>
+                        <label for="computer_type_select" class="form-label">Kompiuterio tipas</label>
+                        <select class="form-select bg-dark text-white" id="computer_type_select" aria-label="Processor selection">
+                            <option value="0" selected>Pasirinkite kompiuterio tipą</option>
                         </select>
                     </div>
                 </div>
+                <h4 class="mt-2 mb-4">Bazės specifikacija</h4>
+                <div class="row" id="base_specification">
+                    <div class="mb-3 col">
+                        <ol class="list-group" id="partsList">
+
+                        </ol>
+                    </div>
+                </div>
+
                 <div class="row">
-                    <div class="mb-3 col">
-                        <label for="graphic_options" class="form-label text-white">Pasirinkti procesorių</label>
-                        <select class="form-select bg-dark text-white" id="graphic_options" aria-label="Graphics card selection">
-                            <option value="1">TEST</option>
-                            <option value="2">TEST</option>
-                            <option value="3">TEST</option>
-                            <option value="4">TEST</option>
-                            <option value="5">TEST</option>
-                            <option value="6">TEST</option>
-                        </select>
-                    </div>
-                    <div class="mb-3 col">
-                        <label for="graphic_options" class="form-label text-white">Pasirinkti talpą</label>
-                        <select class="form-select bg-dark text-white" id="graphic_options" aria-label="Graphics card selection">
-                            <option value="1">TEST</option>
-                            <option value="2">TEST</option>
-                            <option value="3">TEST</option>
-                            <option value="4">TEST</option>
-                            <option value="5">TEST</option>
-                            <option value="6">TEST</option>
-                        </select>
-                    </div>
+                    <div class="mb-3 col">something more</div>
                 </div>
-
-
-
-
 
         </form>
         <div class="d-grid">
@@ -121,6 +85,7 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/base-create.js"></script>
 </body>
 
 </html>

@@ -12,7 +12,6 @@
     </div>
     <div class="row">
         <div class="col">
-
             <label for="search" class="form-label text-white">
                 Ieškoti
                 <?php include 'assets/icons/search-icon.svg'; ?>
@@ -33,7 +32,7 @@
     </div>
 </div>
 
-<table class="table mb-2 mt-2 text-white">
+<table class="table pb-2 mt-2 text-white">
     <thead>
         <tr>
             <th scope="col">Nuotrauka</th>
