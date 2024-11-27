@@ -10,10 +10,54 @@ class Part
         $this->mysqli = $mysqli;
     }
 
+    public function isPartAvailable($partId)
+    {
+        $stmt = $this->mysqli->prepare("SELECT 
+            left_in_storage FROM part WHERE id = ?");
+
+        if (!$stmt) {
+            die("Prepare failed: " . $this->mysqli->error);
+        }
+        $stmt->bind_param("i", $partId);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+
+        if (!$row || intval($row['left_in_storage']) <= 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function checkPartsAvailability()
+    {
+        $partIds = json_decode(file_get_contents('php://input'), true);
+        $unavailableParts = [];
+
+        foreach ($partIds as $part) {
+            $partId = intval($part['partValue']);
+            if (!$this->isPartAvailable($partId)) {
+                $unavailableParts[] = $part['partId'];
+            }
+        }
+
+        echo json_encode([
+            'unavailableParts' => $unavailableParts
+        ]);
+    }
+
     // Get base by ID
     public function getPartById($id)
     {
-        $stmt = $this->mysqli->prepare("SELECT * WHERE id = ?");
+        $stmt = $this->mysqli->prepare("SELECT 
+                p.id, p.name as name, pt.name as part_type, p.price, p.left_in_storage
+                FROM part p
+                    LEFT JOIN part_types pt ON p.part_type = pt.id_part_types
+                WHERE p.id = ?");
+
         if (!$stmt) {
             die("Prepare failed: " . $this->mysqli->error);
         }
@@ -26,7 +70,7 @@ class Part
 
         $stmt->close();
 
-        return $partData; // Return raw data (not JSON encoded)
+        return $partData;
     }
 
     private function getPartId($partType)
@@ -70,5 +114,36 @@ class Part
         $stmt->close();
 
         return $parts;
+    }
+
+    public function create($name, $price, $left_in_storage, $part_type)
+    {
+        // Prepare and execute the SQL query to insert the user into the database
+        $stmt = $this->mysqli->prepare(
+            "INSERT INTO `part`
+            (`name`, `price`, `left_in_storage`, `part_type`) 
+            VALUES (?,?,?,?)"
+        );
+
+        // Check if the statement was prepared successfully
+        if (!$stmt) {
+            throw new Exception("Failed to prepare the query: " . $this->mysqli->error);
+        }
+
+        // Bind the parameters to the prepared statement
+        $stmt->bind_param(
+            'siii',
+            $name,
+            $price,
+            $left_in_storage,
+            $part_type
+        );
+
+
+        if ($stmt->execute()) {
+            return true; // Registration successful
+        } else {
+            throw new Exception("Error creating base.");
+        }
     }
 }

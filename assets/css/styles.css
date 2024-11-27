@@ -1,0 +1,41 @@
+body {
+    height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer;
+    color: white;
+}
+
+a:hover,
+a:hover span,
+a:hover svg {
+    color: lightblue;
+    stroke: lightblue;
+    transition: all .1s ease-out;
+}
+
+select.no-border {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    padding-left: 0.5rem;
+}
+
+input.no-shadow {
+    box-shadow: none;
+    background-color: transparent;
+}
+
+.custom-container {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    width: 100%;
+    padding-right: calc(var(--bs-gutter-x)* .5);
+    padding-left: calc(var(--bs-gutter-x)* .5);
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 1.5rem;
+    color: white
+}

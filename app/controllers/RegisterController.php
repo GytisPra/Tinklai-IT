@@ -22,48 +22,44 @@ class RegisterController
     // Handle the form submission
     public function processRegisterForm()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Get user input from the form
-            $name = $_POST['name'] ?? '';
-            $lastname = $_POST['lastname'] ?? '';
-            $username = $_POST['username'] ?? '';
-            $phone_number = $_POST['phone_number'] ?? '';
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
+        // Ensure it's an AJAX request
+        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
-            // Validate input
-            if (empty($username)) {
-                throw new Exception("Username cannot be empty.");
-            }
+        try {
+            $result = $this->userModel->register(
+                $_POST['name'] ?? '',
+                $_POST['lastname'] ?? '',
+                $_POST['phone_number'] ?? '',
+                $_POST['email'] ?? '',
+                $_POST['username'] ?? '',
+                $_POST['password'] ?? '',
+                3
+            );
 
-            if (empty($lastname)) {
-                throw new Exception("Lastname cannot be empty.");
+            // Prepare response
+            if ($isAjax && $result) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Vartotojas sėkmingai sukurtas',
+                    // Optional: include any additional data
+                ]);
+                exit;
+            } else {
+                // Traditional form submission
+                header("Location: /dashboard");
+                exit;
             }
-            if (empty($phone_number)) {
-                throw new Exception("Phone_number cannot be empty.");
-            }
-            if (empty($email)) {
-                throw new Exception("Email cannot be empty.");
-            }
-            if (empty($username)) {
-                throw new Exception("Username cannot be empty.");
-            }
-            if (empty($password)) {
-                throw new Exception("password cannot be empty.");
-            }
-
-            try {
-                // Check if the username already exists
-                if ($this->userModel->usernameExists($username)) {
-                    echo "Username already taken!";
-                    return;
-                }
-
-                // Register the user
-                $this->userModel->register($name, $lastname, $phone_number, $email, $username, $password);
-                echo "Registration successful!";
-            } catch (Exception $e) {
-                echo $e->getMessage();
+        } catch (Exception $e) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(400); // Bad Request
+                echo json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]);
+                exit;
             }
         }
     }

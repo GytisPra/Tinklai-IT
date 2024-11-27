@@ -21,37 +21,44 @@ class LoginController
 
     public function processLoginForm()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Get user input from the form
-            $username = $_POST['username'] ?? '';
-            $password = $_POST['password'] ?? '';
+        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
-            if (empty($username)) {
-                throw new Exception("Username cannot be empty.");
+        try {
+            $result = $this->userModel->authenticate(
+                $_POST['username'] ?? '',
+                $_POST['password'] ?? '',
+            );
+
+            // Prepare response
+            if ($isAjax && $result) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'authenticated' => true,
+                    'success' => true,
+                ]);
+                $_SESSION['user'] = $result;
+                exit;
+            } elseif (!$result) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'authenticated' => false,
+                    'success' => false,
+                ]);
+                exit;
+            } else {
+                // Traditional form submission
+                header("Location: /dashboard");
+                exit;
             }
-
-            if (empty($password)) {
-                throw new Exception("Password cannot be empty.");
-            }
-
-            try {
-                $authResult = $this->userModel->authenticate($username, $password);
-                if ($authResult) {
-                    // Store user info in session
-                    $_SESSION['user'] = $authResult;
-                    header("Location: /dashboard");
-                    exit;
-                } else {
-                    // Handle failed authentication
-                    $_SESSION['error'] = "Invalid username or password";
-                    header("Location: /login");
-                    exit;
-                }
-            } catch (Exception $e) {
-                // Log error and show a user-friendly message
-                error_log($e->getMessage());
-                $_SESSION['error'] = "An error occurred. Please try again later.";
-                header("Location: /login");
+        } catch (Exception $e) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(400); // Bad Request
+                echo json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]);
                 exit;
             }
         }

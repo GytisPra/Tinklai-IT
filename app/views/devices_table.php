@@ -19,17 +19,20 @@
             <input id="search" type="text" class="form-control rounded bg-dark text-white" placeholder="Pavadinimas" />
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <a class="border p-2 rounded text-nowrap" href="/create-base">+Pridėti bazę</a>
+    <?php if (isUserInRole([1, 2])): // Check if the user is a technician or admin
+    ?>
+        <div class="row">
+            <div class="col">
+                <a class="border p-2 rounded text-nowrap" href="/create-base">+Pridėti bazę</a>
+            </div>
+            <div class="col">
+                <a class="border p-2 rounded text-nowrap" href="/create-device">+Pridėti įrenginį</a>
+            </div>
+            <div class="col">
+                <a class="border p-2 rounded text-nowrap" href="/create-part">+Pridėti dalį</a>
+            </div>
         </div>
-        <div class="col">
-            <a class="border p-2 rounded text-nowrap" href="/create-device">+Pridėti įrengnį</a>
-        </div>
-        <div class="col">
-            <a class="border p-2 rounded text-nowrap" href="/create-part">+Pridėti dalį</a>
-        </div>
-    </div>
+    <?php endif; ?>
 </div>
 
 <table class="table pb-2 mt-2 text-white">

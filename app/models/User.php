@@ -9,13 +9,11 @@ class User
         $this->mysqli = $mysqli;
     }
 
-    // Method to register a user
-    public function register($name, $lastname, $phone_number, $email, $username, $password)
+    public function register($name, $lastname, $phone_number, $email, $username, $password, $role)
     {
         if (empty($username)) {
             throw new Exception("Username cannot be empty.");
         }
-
         if (empty($lastname)) {
             throw new Exception("Lastname cannot be empty.");
         }
@@ -31,6 +29,9 @@ class User
         if (empty($password)) {
             throw new Exception("password cannot be empty.");
         }
+        if (empty($role)) {
+            throw new Exception("role cannot be empty.");
+        }
 
         // Hash the password before saving it
 
@@ -39,8 +40,8 @@ class User
 
         // Prepare and execute the SQL query to insert the user into the database
         $stmt = $this->mysqli->prepare(
-            "INSERT INTO user (name, lastname, phone_number, email, username, password, createdAt, updatedAt) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO user (name, lastname, phone_number, email, username, password, role, createdAt, updatedAt) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
         // Check if the statement was prepared successfully
@@ -49,7 +50,7 @@ class User
         }
 
         // Bind the parameters to the prepared statement
-        $stmt->bind_param('ssssssss', $name, $lastname, $phone_number, $email, $username, $hashedPassword, $currDate, $currDate);
+        $stmt->bind_param('ssssssiss', $name, $lastname, $phone_number, $email, $username, $hashedPassword, $role, $currDate, $currDate);
 
 
         if ($stmt->execute()) {
@@ -81,9 +82,10 @@ class User
         $id = null;
         $fetchedUsername = null;
         $hashedPassword = null;
+        $role = null;
 
         // Prepare the SQL statement
-        $stmt = $this->mysqli->prepare("SELECT id, username, password FROM user WHERE username = ?");
+        $stmt = $this->mysqli->prepare("SELECT id, username, password, role FROM user WHERE username = ?");
         if (!$stmt) {
             throw new Exception("Database query error: " . $this->mysqli->error);
         }
@@ -93,14 +95,15 @@ class User
         $stmt->execute();
 
         // Bind result variables
-        $stmt->bind_result($id, $fetchedUsername, $hashedPassword);
+        $stmt->bind_result($id, $fetchedUsername, $hashedPassword, $role);
         if ($stmt->fetch()) {
             // Check the password against the hash
             if ($hashedPassword && password_verify($password, $hashedPassword)) {
                 $stmt->close();
                 return [
                     'id' => $id,
-                    'username' => $fetchedUsername
+                    'username' => $fetchedUsername,
+                    'role' => $role
                 ];
             }
         }

@@ -18,7 +18,7 @@
 
     <div class="container-fluid">
         <!-- Left Side: Brand -->
-        <a class="navbar-brand " href="/dashboard">Konstruktorius</a>
+        <a class="navbar-brand" href="/dashboard">Konstruktorius <?= ($role = getUserRole()) ? "($role)" : '' ?></a>
 
         <!-- Burger Menu for Small Screens -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,22 +29,32 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <?php if (function_exists('isUserLoggedIn') && isUserLoggedIn()) { ?>
-                        <!-- Logout Link -->
-                        <a href="/logout">
-                            <?php include 'assets/icons/logout-icon.svg' ?>
+                    <?php if (isUserInRole([2]) && isUserLoggedIn()): ?>
+                        <a class="pe-2" href="/my-devices">
+                            <span>Mano įrenginiai</span>
+                        </a>
+                    <?php endif; ?>
+                    <?php
+                    if (isUserLoggedIn()): ?>
+                        <a href="/profile">
+                            <?php include 'assets/icons/profile-icon.svg'; ?>
+                            <span>Profilis</span>
+                        </a>
+                        <span class="mx-2">|</span>
+                        <a href="/logout" class="text-decoration-none">
+                            <?php include 'assets/icons/logout-icon.svg'; ?>
                             <span>Atsijungti</span>
                         </a>
-                    <?php } else { ?>
+                    <?php else: ?>
                         <a href="/login">
-                            <?php include 'assets/icons/profile-icon.svg' ?>
+                            <?php include 'assets/icons/profile-icon.svg'; ?>
                             <span>Prisijungti</span>
                         </a>
                         <span class="mx-2">|</span>
                         <a href="/register" class="text-decoration-none">
                             <span>Registruotis</span>
                         </a>
-                    <?php } ?>
+                    <?php endif; ?>
                 </li>
             </ul>
         </div>

@@ -30,9 +30,15 @@
   <body class="bg-dark">
     <div class="registration-box text-white">
       <h2 class="text-center mb-4">Registracija</h2>
-      <form method="POST" action="/register/submit">
+      <form method="POST" id="registrationForm">
+        <div class="row justify-content-center">
+          <div style="display: none" id="errorContainer"></div>
+        </div>
         <div class="mb-3">
-          <label for="name" class="form-label">Vardas</label>
+          <label for="name" class="form-label d-flex"
+            >Vardas
+            <div style="display: none" id="name_error"></div
+          ></label>
           <input
             type="text"
             class="form-control"
@@ -42,7 +48,10 @@
           />
         </div>
         <div class="mb-3">
-          <label for="lastname" class="form-label">Pavardė</label>
+          <label for="lastname" class="form-label d-flex"
+            >Pavardė
+            <div style="display: none" id="lastname_error"></div
+          ></label>
           <input
             type="text"
             class="form-control"
@@ -52,7 +61,10 @@
           />
         </div>
         <div class="mb-3">
-          <label for="username" class="form-label">Prisijungimo vardas</label>
+          <label for="username" class="form-label d-flex text-nowrap"
+            >Prisijungimo vardas
+            <div style="display: none" id="username_error"></div
+          ></label>
           <input
             type="text"
             class="form-control"
@@ -62,29 +74,32 @@
           />
         </div>
         <div class="mb-3">
-          <label for="phone_number" class="form-label">Telefono numeris</label>
+          <label for="phone_number" class="form-label d-flex text-nowrap"
+            >Telefono numeris
+            <div style="display: none" id="phone_number_error"></div
+          ></label>
           <input
             type="tel"
             class="form-control"
             id="phone_number"
             name="phone_number"
-            pattern="+[0-9]{11}"
+            pattern="\+[0-9]{11}"
             placeholder="+370xxxxxxxx"
             required
           />
         </div>
         <div class="mb-3">
-          <label for="email" class="form-label">El. paštas</label>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            required
-          />
+          <label for="email" class="form-label d-flex"
+            >El. paštas
+            <div style="display: none" id="email_error"></div
+          ></label>
+          <input type="email" class="form-control" id="email" name="email" />
         </div>
         <div class="mb-3">
-          <label for="password" class="form-label">Slaptažodis</label>
+          <label for="password" class="form-label d-flex"
+            >Slaptažodis
+            <div style="display: none" id="password_error"></div
+          ></label>
           <input
             type="password"
             class="form-control"
@@ -103,5 +118,6 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/registrationFormValidation.js"></script>
   </body>
 </html>
