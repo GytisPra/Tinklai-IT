@@ -13,7 +13,7 @@ class DeviceController
 
     public function showDeviceCreationForm()
     {
-        include 'app/views/create-device.php';
+        include 'app/views/device.php';
     }
 
     public function showTechniciansDevices()
@@ -21,9 +21,89 @@ class DeviceController
         include 'app/views/my-devices.php';
     }
 
-    public function showDeviceEditForm()
+    public function showUserAssemblies()
     {
-        include 'app/views/edit-device.php';
+        $userId = intval(getUserId());
+
+        $assemblyData = $this->deviceModel->getUserAssemblies($userId);
+
+        if ($assemblyData) {
+            $this->renderView('my-assemblies', ['assemblyData' => $assemblyData]);
+        } else {
+            $this->renderView('my-assemblies', []);
+        }
+    }
+
+    public function showAssemblyEditForm($query)
+    {
+        // Check if 'device_id' is provided in the query parameters
+        if (isset($query['assembly_id'])) {
+            $assemblyId = intval($query['assembly_id']);
+            $assemblyData = $this->deviceModel->getAssemblyById($assemblyId);
+
+            $deviceData = $this->deviceModel->getDeviceById($assemblyData['device_id']);
+
+            if ($deviceData) {
+                // Pass the device data to the view
+                $this->renderView('assemble-device', ['device' => $deviceData, 'assembly' => $assemblyData]);
+            } else {
+                // Handle case where the device is not found
+                http_response_code(404);
+                echo "Assembly not found. Return to <a href='dashboard'>dashboard</a>";
+            }
+        } else {
+            // Handle case where 'device_id' is not provided
+            http_response_code(400);
+            echo "Invalid request: Device ID is required.";
+        }
+    }
+
+    public function showDeviceEditForm($query)
+    {
+        // Check if 'device_id' is provided in the query parameters
+        if (isset($query['device_id'])) {
+            $deviceId = intval($query['device_id']);
+
+            // Fetch the device data using the model
+            $deviceData = $this->deviceModel->getDeviceById($deviceId);
+
+            if ($deviceData) {
+                // Pass the device data to the view
+                $this->renderView('device', ['device' => $deviceData]);
+            } else {
+                // Handle case where the device is not found
+                http_response_code(404);
+                echo "Device not found. Return to <a href='dashboard'>dashboard</a>";
+            }
+        } else {
+            // Handle case where 'device_id' is not provided
+            http_response_code(400);
+            echo "Invalid request: Device ID is required.";
+        }
+    }
+
+    public function showDeviceAssembleForm($query)
+    {
+        // Check if 'device_id' is provided in the query parameters
+        if (isset($query['device_id'])) {
+            $deviceId = intval($query['device_id']);
+
+            // Fetch the device data using the model
+            $deviceData = $this->deviceModel->getDeviceById($deviceId);
+
+            if ($deviceData) {
+                // Pass the device data to the view
+                $this->renderView('assemble-device', ['device' => $deviceData]);
+            } else {
+                // Handle case where the device is not found
+                http_response_code(404);
+                echo "Device not found. Return to <a href='dashboard'>dashboard</a>";
+            }
+        } else {
+            // Handle case where 'device_id' is not provided
+            http_response_code(400);
+            echo "Invalid request: Device ID is required.";
+        }
     }
 
     public function renderView($viewName, $data = [])
@@ -55,16 +135,34 @@ class DeviceController
         }
     }
 
+    public function getDeviceById($query)
+    {
+        header('Content-Type: application/json');
+
+        if (isset($query['device_id'])) {
+            $deviceId = intval($query['device_id']);
+            $deviceData = $this->deviceModel->getDeviceById($deviceId);
+
+            if ($deviceData) {
+                echo json_encode($deviceData); // Return JSON data
+            } else {
+                http_response_code(404);
+                echo json_encode(['error' => 'Device not found']);
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid device ID']);
+        }
+    }
+
     public function getAllDevices()
     {
         $deviceData = $this->deviceModel->getAllDevices();
 
         if ($deviceData) {
-            header('Content-Type: application/json');
-            echo json_encode($deviceData);
+            return $deviceData;
         } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'No devices found']);
+            echo 'error No devices found';
         }
     }
 
@@ -124,58 +222,58 @@ class DeviceController
 
         try {
             // Input validation
-            $name = $_POST['name'] ?? '';
-            $type = $_POST['computerType'] ?? '';
-            if (empty($name)) {
-                throw new Exception("Pavadinimas yra privalomas");
+            $name = htmlspecialchars(trim($_POST['name'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $price = isset($_POST['price']) ? floatval(str_replace(',', '.', $_POST['price'])) : 0.0; // Handle commas
+            $selectedParts = $_POST['selectedParts'] ?? [];
+
+            // Check if at least one part is selected
+            if (empty($selectedParts)) {
+                throw new Exception("Turi būti pasirinktas bent vienas komponentas.");
             }
 
-            // Validate all required fields
-            $requiredFields = [
-                'motherboard_id',
-                'memory_id',
-                'storage_id',
-                'processor_id',
-                'graphics_card_id',
-                'cooling_id',
-                'screen_id',
-                'os_id'
-            ];
+            $createdBy = getUserId(); // Assuming this function returns the current user's ID
 
-            foreach ($requiredFields as $field) {
-                if (empty($_POST[$field]) || !is_numeric($_POST[$field])) {
-                    throw new Exception("Neteisingai pasirinkta " . $field);
-                }
-            }
-
-            $createdBy = getUserId();
-
-
-            // Attempt to create device
-            $result = $this->deviceModel->create(
+            // Attempt to create the device
+            $deviceData = $this->deviceModel->create(
                 $name,
-                $type,
-                $_POST['motherboard_id'],
-                $_POST['memory_id'],
-                $_POST['storage_id'],
-                $_POST['processor_id'],
-                $_POST['graphics_card_id'],
-                $_POST['cooling_id'],
-                $_POST['screen_id'],
-                $_POST['os_id'],
+                $price,
                 $createdBy
             );
 
+            $deviceId = $deviceData['id'];
+            foreach ($selectedParts as $partId) {
+                try {
+                    $this->deviceModel->linkDevicePart($deviceId, $partId);
+                } catch (Exception $e) {
+                    if ($isAjax) {
+                        header('Content-Type: application/json');
+                        http_response_code(400); // Bad Request
+                        echo json_encode([
+                            'success' => false,
+                            'message' => $e->getMessage()
+                        ]);
+                        exit;
+                    } else {
+                        // Traditional error handling (for regular form submission)
+                        $errorMessages[] = $e->getMessage();
+                        $this->renderView('device', [
+                            'errorMessages' => $errorMessages,
+                            'formData' => $_POST
+                        ]);
+                    }
+                }
+            }
+
             // Prepare response
-            if ($isAjax && $result) {
+            if ($isAjax) {
                 header('Content-Type: application/json');
                 echo json_encode([
                     'success' => true,
                     'message' => 'Įrenginys sėkmingai sukurtas',
-                    // Optional: include any additional data
+                    'device_id' => $deviceId // Return the new device's ID
                 ]);
                 exit;
-            } elseif ($result) {
+            } else {
                 // Traditional form submission
                 header("Location: /dashboard");
                 exit;
@@ -191,13 +289,224 @@ class DeviceController
                 ]);
                 exit;
             } else {
-                // Traditional error handling
+                // Traditional error handling (for regular form submission)
                 $errorMessages[] = $e->getMessage();
-                $this->renderView('create-device', [
+                $this->renderView('device', [
                     'errorMessages' => $errorMessages,
                     'formData' => $_POST
                 ]);
             }
         }
     }
+
+
+    public function processDeviceEdit()
+    {
+        // Ensure it's an AJAX request
+        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+        // Validation and error handling
+        $errorMessages = [];
+
+        try {
+            // Input validation
+            $name = htmlspecialchars(trim($_POST['name'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $price = isset($_POST['price']) ? floatval(str_replace(',', '.', $_POST['price'])) : 0.0; // Handle commas
+            $deviceId = $_POST['device_id'] ?? '';
+            $selectedParts = $_POST['selectedParts'] ?? [];
+
+            // Check if at least one part is selected
+            if (empty($selectedParts)) {
+                throw new Exception("Turi būti pasirinktas bent vienas komponentas.");
+            }
+
+            // Attempt to create the device
+            $this->deviceModel->update(
+                $name,
+                $price,
+                $selectedParts,
+                $deviceId
+            );
+
+            // Prepare response
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Įrenginys sėkmingai atnaujintas',
+                    'device_id' => $deviceId // Return the new device's ID
+                ]);
+                exit;
+            } else {
+                // Traditional form submission
+                header("Location: /dashboard");
+                exit;
+            }
+        } catch (Exception $e) {
+            // Handle errors
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(400); // Bad Request
+                echo json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]);
+                exit;
+            } else {
+                // Traditional error handling (for regular form submission)
+                $errorMessages[] = $e->getMessage();
+                $this->renderView('device', [
+                    'errorMessages' => $errorMessages,
+                    'formData' => $_POST
+                ]);
+            }
+        }
+    }
+
+    public function processAssemblyEdit()
+    {
+        // Ensure it's an AJAX request
+        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+        // Validation and error handling
+        $errorMessages = [];
+
+        try {
+            $assemblyId = $_POST['assembly_id'] ?? '';
+            $name = $_POST['name'] ?? '';
+            $processor_id = $_POST['processor_id'] ?? '';
+            $motherboard_id = $_POST['motherboard_id'] ?? '';
+            $screen_id = $_POST['screen_id'] ?? '';
+            $memory_id = $_POST['memory_id'] ?? '';
+            $graphics_card_id = $_POST['graphics_card_id'] ?? '';
+            $storage_id = $_POST['storage_id'] ?? '';
+            $cooling_id = $_POST['cooling_id'] ?? '';
+            $os_id = $_POST['os_id'] ?? '';
+
+            // Attempt to update the assembly
+            $this->deviceModel->updateAssembly(
+                $assemblyId,
+                $name,
+                $processor_id,
+                $motherboard_id,
+                $screen_id,
+                $memory_id,
+                $graphics_card_id,
+                $storage_id,
+                $cooling_id,
+                $os_id
+            );
+
+            // Prepare response
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Komplektas sėkmingai atnaujintas',
+                    'assembly_id' => $assemblyId // Return the new device's ID
+                ]);
+                exit;
+            } else {
+                // Traditional form submission
+                header("Location: /dashboard");
+                exit;
+            }
+        } catch (Exception $e) {
+            // Handle errors
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(400); // Bad Request
+                echo json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]);
+                exit;
+            } else {
+                // Traditional error handling (for regular form submission)
+                $errorMessages[] = $e->getMessage();
+                $this->renderView('assemble-device', [
+                    'errorMessages' => $errorMessages,
+                    'formData' => $_POST
+                ]);
+            }
+        }
+    }
+
+    public function processDeviceAssembly()
+    {
+        // Ensure it's an AJAX request
+        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+        // Validation and error handling
+        $errorMessages = [];
+
+        try {
+            $deviceId = $_POST['device_id'] ?? '';
+            $assemblyName = $_POST['name'] ?? '';
+            $price = $_POST['price'] ?? '';
+            $processor_id = $_POST['processor_id'] ?? '';
+            $motherboard_id = $_POST['motherboard_id'] ?? '';
+            $screen_id = $_POST['screen_id'] ?? '';
+            $memory_id = $_POST['memory_id'] ?? '';
+            $graphics_card_id = $_POST['graphics_card_id'] ?? '';
+            $storage_id = $_POST['storage_id'] ?? '';
+            $cooling_id = $_POST['cooling_id'] ?? '';
+            $os_id = $_POST['os_id'] ?? '';
+            $belongsTo = getUserId(); // Assuming this function returns the current user's ID
+
+            //Attempt to create the device
+            $assemblyData = $this->deviceModel->createUserAssembly(
+                $belongsTo,
+                $assemblyName,
+                $price,
+                $deviceId,
+                $processor_id,
+                $motherboard_id,
+                $screen_id,
+                $memory_id,
+                $graphics_card_id,
+                $storage_id,
+                $cooling_id,
+                $os_id
+            );
+
+            // Prepare response
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Komplektas sėkmingai sukurtas',
+                    'assembly_id' => $assemblyData['id'] // Return the new device's ID
+                ]);
+                exit;
+            } else {
+                // Traditional form submission
+                header("Location: /dashboard");
+                exit;
+            }
+        } catch (Exception $e) {
+            // Handle errors
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                http_response_code(400); // Bad Request
+                echo json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ]);
+                exit;
+            } else {
+                // Traditional error handling (for regular form submission)
+                $errorMessages[] = $e->getMessage();
+                $this->renderView('device', [
+                    'errorMessages' => $errorMessages,
+                    'formData' => $_POST
+                ]);
+            }
+        }
+    }
+
+    public function getUserAssemblies($userId) {}
 }

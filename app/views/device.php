@@ -14,21 +14,25 @@
 
     <div class="container">
         <h2 class="mt-2 mb-4"><?= isset($device) ? 'Redaguoti įrenginį' : 'Aprašyti įrenginį' ?></h2>
-        <form method="POST" id="deviceCreationForm" action="<?= isset($device) ? '/edit-device' : '/create-device' ?>">
+        <form method="POST" id="deviceForm" action="<?= isset($device) ? '/edit-device' : '/create-device' ?>">
             <input type="hidden" name="device_id" value="<?= isset($device) ? $device['device_id'] : '' ?>" />
             <div class="row">
                 <div class="mb-3 col">
-                    <label for="name" class="form-label">Pavadinimas</label>
-                    <input type="text" class="form-control bg-dark text-white" id="name" name="name" required
-                        value="<?= isset($device) ? htmlspecialchars($device['device_name']) : '' ?>" />
+                    <div class="input-group">
+                        <span class="input-group-text col-2">Pavadinimas</span>
+                        <input type="text" class="form-control bg-dark text-white" id="name" name="name" required
+                            value="<?= isset($device) ? htmlspecialchars($device['device_name']) : '' ?>" />
+                    </div>
+
                 </div>
+            </div>
+            <div class="row">
                 <div class="mb-3 col">
-                    <label for="computer_type_select" class="form-label">Kompiuterio tipas</label>
-                    <select class="form-select bg-dark text-white" name="computerType" id="computer_type_select" aria-label="Processor selection">
-                        <option value="0" class="text-secondary" <?= !isset($device) || $device['computer_type'] == 0 ? 'selected' : '' ?>>Pasirinkite kompiuterio tipą</option>
-                        <option value="1" <?= isset($device) && $device['computer_type'] == 1 ? 'selected' : '' ?>>Žaidimų kompiuteris</option>
-                        <option value="2" <?= isset($device) && $device['computer_type'] == 2 ? 'selected' : '' ?>>Darbinis kompiuteris</option>
-                    </select>
+                    <div class="input-group">
+                        <span class="input-group-text col-2">Konstrukcijos kaina</span>
+                        <input required name="price" id="price" class="form-control bg-dark text-white" aria-label="Price" type="text"
+                            value="<?= isset($device) ? htmlspecialchars($device['device_cost']) : '' ?>">
+                    </div>
                 </div>
             </div>
             <h4 class="mt-2 mb-4">Kompiuterio dalys</h4>
@@ -55,6 +59,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/assets/js/deviceLoadData.js"></script>
     <script src="/assets/js/deviceFormValidation.js"></script>
+    <script>
+        const deviceData = <?= isset($device) ? json_encode($device, JSON_HEX_TAG | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_APOS) : 'null' ?>;
+    </script>
 </body>
 
 </html>

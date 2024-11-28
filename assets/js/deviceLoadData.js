@@ -1,102 +1,142 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const loadingOverlay = document.getElementById("loadingOverlay");
 
-  // Function to fetch parts
-  async function getPartList(partType) {
-    if (partType) {
-      try {
-        const response = await fetch(`/get-parts?part_type=${partType}`);
-        if (!response.ok) throw new Error("Failed to fetch parts data");
+  async function getAllPartList() {
+    try {
+      const response = await fetch(`/get-all-parts`);
+      if (!response.ok) throw new Error("Failed to fetch parts data");
 
-        return await response.json();
-      } catch (error) {
-        console.error("Error fetching parts data:", error);
-      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching parts data:", error);
     }
   }
 
-  // Function to populate fields with fetched data
-  async function loadPartSelect(partType, publicName, selectWhat) {
+  async function loadParts(selectConfig) {
+    const allParts = await getAllPartList();
     const partList = document.getElementById("partsList");
 
-    try {
-      const parts = await getPartList(partType);
-
-      // Create <li> element
+    selectConfig.forEach(async (config) => {
       const listItem = document.createElement("li");
       listItem.className =
         "list-group-item text-white d-flex justify-content-between align-items-center";
 
-      // Create the HTML structure
-      listItem.innerHTML = `
-        <div class="ms-2 me-auto">
-          <div class="fw-bold">${publicName}</div>
-          <select class="form-select bg-dark text-white no-border" name="${partType}_id" id="${partType}_options" aria-label="${partType} selection"> 
-            <option value="0" class="text-secondary" selected>Pasirinkite ${selectWhat} </option>
-            ${parts
-              .map(
-                (part) =>
-                  `<option value="${part.id}" data-storage="${part.left_in_storage}">${part.name}</option>`
-              )
-              .join("")}
-          </select>
-        </div>
-        <div class="ms-2 d-flex flex-column">
-          Likutis <span class="badge text-bg-primary rounded-pill" id="${partType}_storage">---</span>
-        </div>
-      `;
+      // Initialize the innerHTML for the listItem
+      let innerHTMLContent = `<div class="ms-2 me-auto d-flex flex-column" id="${config.partType}"> 
+        <div class="fw-bold">${config.nameLt}</div>`;
 
-      // Append the <li> to the list
+      // Ensure the partType exists in allParts before trying to access it
+
+      if (allParts[config.partType]) {
+        allParts[config.partType].forEach((part) => {
+          const selectedIds =
+            deviceData && deviceData[`${config.partType}_ids`]
+              ? deviceData[`${config.partType}_ids`]
+                  .split(",")
+                  .map((id) => id.trim()) // Convert to array and trim any extra spaces
+              : [];
+
+          const isChecked = selectedIds.some((id) => id === part.id.toString()) // Check if the part.id is in the selectedIds array
+            ? "checked"
+            : "";
+
+          innerHTMLContent += `<div class="form-check">
+            <input name="${
+              config.partType
+            }_id" class="form-check-input bg-dark" id="${
+            part.id
+          }" type="checkbox" value="${part.id}" data-storage="${
+            part.left_in_storage
+          }" ${isChecked ? "checked" : ""}/>
+            <label id="${part.id}_label" class="form-check-label" for="${
+            part.id
+          }">${part.name}</label>
+          </div>`;
+        });
+      }
+
+      //       <div class="form-check">
+      //   <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+      //   <label class="form-check-label" for="flexCheckDefault">
+      //     Default checkbox
+      //   </label>
+      // </div>
+
+      // Set the listItem's innerHTML after all the content has been prepared
+      listItem.innerHTML = innerHTMLContent;
+
       partList.appendChild(listItem);
+    });
+  }
 
-      // Add an event listener to the <select>
-      const selectElement = listItem.querySelector(`#${partType}_options`);
-      const storageBadge = listItem.querySelector(`#${partType}_storage`);
+  function updateStorageBadge(selectedOption, storageBadge) {
+    const storageLeft =
+      parseInt(selectedOption.getAttribute("data-storage"), 10) || 0;
 
-      selectElement.addEventListener("change", (event) => {
-        const selectedOption = event.target.selectedOptions[0];
-        const storageLeft =
-          parseInt(selectedOption.getAttribute("data-storage"), 10) || 0;
+    // Update the badge text
+    storageBadge.textContent = storageLeft;
 
-        // Update the badge text
-        storageBadge.textContent = storageLeft;
+    // Update the badge color based on the amount
+    storageBadge.classList.remove(
+      "text-bg-primary",
+      "text-bg-success",
+      "text-bg-warning",
+      "text-bg-danger"
+    );
 
-        // Update the badge color based on the amount
-        storageBadge.classList.remove(
-          "text-bg-primary",
-          "text-bg-success",
-          "text-bg-warning",
-          "text-bg-danger"
-        );
-
-        if (storageLeft < 5) {
-          storageBadge.classList.add("text-bg-danger"); // Red for less than 5
-        } else if (storageLeft <= 10) {
-          storageBadge.classList.add("text-bg-warning"); // Yellow for 5-10
-        } else {
-          storageBadge.classList.add("text-bg-success"); // Green for more than 10
-        }
-      });
-    } catch (error) {
-      console.error("Failed to load parts:", error);
+    if (storageLeft < 5) {
+      storageBadge.classList.add("text-bg-danger"); // Red for less than 5
+    } else if (storageLeft <= 10) {
+      storageBadge.classList.add("text-bg-warning"); // Yellow for 5-10
+    } else {
+      storageBadge.classList.add("text-bg-success"); // Green for more than 10
     }
   }
 
-  // Show loading overlay
+  const selectConfig = [
+    {
+      partType: "processor",
+      nameLt: "Procesorius",
+      selectWhat: "procesorių",
+    },
+    {
+      partType: "motherboard",
+      nameLt: "Motininė plokštė",
+      selectWhat: "motininę plokštę",
+    },
+    {
+      partType: "memory",
+      nameLt: "Atmintis",
+      selectWhat: "atmintį",
+    },
+    {
+      partType: "storage",
+      nameLt: "Talpa",
+      selectWhat: "talpą",
+    },
+    {
+      partType: "graphics_card",
+      nameLt: "Vaizdo plokštė",
+      selectWhat: "vaizdo plokštę",
+    },
+    {
+      partType: "screen",
+      nameLt: "Ekranas",
+      selectWhat: "ekraną",
+    },
+    {
+      partType: "cooling",
+      nameLt: "Aušinimas",
+      selectWhat: "vaizdo plokštę",
+    },
+    {
+      partType: "os",
+      nameLt: "Operacinė sistema",
+      selectWhat: "operacinę sistemą",
+    },
+  ];
+
   loadingOverlay.style.display = "flex";
-
-  // Load all parts
-  await Promise.all([
-    loadPartSelect("processor", "Procesorius", "procesorių"),
-    loadPartSelect("motherboard", "Motininė plokštė", "motininę plokštę"),
-    loadPartSelect("memory", "Atminits", "atmintį"),
-    loadPartSelect("storage", "Talpa", "talpą"),
-    loadPartSelect("screen", "Ekranas", "ekraną"),
-    loadPartSelect("graphics_card", "Vaizdo plokštė", "vaizdo plokštę"),
-    loadPartSelect("cooling", "Aušinimas", "aušinimo tipą"),
-    loadPartSelect("os", "Operacinė sistema", "operacinė sistemą"),
-  ]);
-
-  // Hide loading overlay
+  await Promise.all([loadParts(selectConfig)]);
   loadingOverlay.style.display = "none";
 });

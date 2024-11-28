@@ -40,7 +40,6 @@ class PartController
             // Get the raw POST data
             $rawInput = file_get_contents('php://input');
             $partIds = json_decode($rawInput, true);
-
             // Validate input
             if ($partIds === null) {
                 http_response_code(400);
@@ -93,6 +92,40 @@ class PartController
         } else {
             http_response_code(400);
             echo json_encode(['error' => 'Invalid part type']);
+        }
+    }
+
+    public function getPartPrice($query)
+    {
+        header('Content-Type: application/json');
+
+        if (isset($query['part_id'])) {
+            $partId = $query['part_id'];
+            $partsPrice = $this->partModel->getPartPriceById($partId);
+
+            if ($partsPrice) {
+                echo json_encode($partsPrice); // Return JSON data
+            } else {
+                http_response_code(404);
+                echo json_encode(['error' => 'Part not found']);
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid part id']);
+        }
+    }
+
+    public function getAllPartsList()
+    {
+        header('Content-Type: application/json');
+
+        $partsData = $this->partModel->getAllPartsList();
+
+        if ($partsData) {
+            echo json_encode($partsData); // Return JSON data
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Parts not found']);
         }
     }
 

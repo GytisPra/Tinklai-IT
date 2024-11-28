@@ -34,22 +34,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const costInput = document.getElementById("price");
-    if (!costInput.value.trim()) {
-      displayError("Įveskite kainą");
-      return;
-    } else {
-      const value = parseInt(costInput.value);
-
-      if (isNaN(value)) {
-        displayError("Kaina turi būti skaičius");
-        return;
-      } else if (value <= 0) {
-        displayError("Kaina turi teigiamas skaičius");
-        return;
-      }
-    }
-
     // Validate parts
 
     let errorMessages = [];
@@ -57,16 +41,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Validate each required part
     for (let part of requiredParts) {
       // Select all checkboxes within the specified div by its id (e.g., #motherboard)
-      let checkboxes = document.querySelectorAll(
-        `#${part.id} .form-check input[type="checkbox"]`
+      let radios = document.querySelectorAll(
+        `#${part.id} .form-check input[type="radio"]`
       );
 
-      // Check if any checkbox is checked
-      const isChecked = Array.from(checkboxes).some(
-        (checkbox) => checkbox.checked
-      );
+      const isChecked =
+        Array.from(radios).filter((radio) => radio.checked).length === 1;
 
-      // If none of the checkboxes are selected, add an error message
       if (!isChecked) {
         errorMessages.push(part.message);
       }
@@ -82,31 +63,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function submitForm() {
     const formData = new FormData(form);
-    const selectedParts = [];
-
-    for (let part of requiredParts) {
-      let checkboxes = document.querySelectorAll(
-        `#${part.id} .form-check input[type="checkbox"]`
-      );
-      checkboxes.forEach((checkbox) => {
-        if (checkbox.checked) {
-          selectedParts.push(checkbox.value);
-        }
-      });
-    }
-
-    selectedParts.forEach((partId) => {
-      formData.append("selectedParts[]", partId);
-    });
 
     // Determine the endpoint based on whether we are editing or creating
-    const endpoint =
-      deviceData && deviceData.device_id
-        ? "/edit-device/update"
-        : "/create-device/submit";
+    const endpoint = assemblyData
+      ? "/assembly-edit/update"
+      : "/assemble-device/assemble";
 
-    if (deviceData && deviceData.device_id) {
+    if (
+      deviceData &&
+      deviceData.device_id &&
+      deviceData.device_name &&
+      deviceData.device_cost
+    ) {
       formData.append("device_id", deviceData.device_id);
+      formData.append("device_name", deviceData.device_name);
+      formData.append("price", deviceData.device_cost);
+    }
+
+    if (assemblyData && assemblyData.id) {
+      formData.append("assembly_id", assemblyData.id);
     }
 
     fetch(endpoint, {
@@ -119,14 +94,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
       .then(async (response) => {
         const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new TypeError("Received non-JSON response");
+
+        // Check if the response is JSON or not
+        if (contentType && contentType.includes("application/json")) {
+          // Handle JSON response
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.message || "Klaida tvarkant įrenginį");
+          }
+          return data; // Return JSON data for further handling
+        } else {
+          // Handle non-JSON response (text, HTML, etc.)
+          const text = await response.text(); // Read the response as text
+          if (!response.ok) {
+            throw new Error(text || "Klaida tvarkant įrenginį");
+          }
+          return { success: true, message: text }; // Return the response as text with success flag
         }
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Klaida tvarkant įrenginį");
-        }
-        return response.json();
       })
       .then((data) => {
         if (data.success) {
@@ -246,9 +230,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!linkToDevices) {
       linkToDevices = document.createElement("a");
       linkToDevices.id = "linkToDevices";
-      linkToDevices.textContent = "Eiti į mano įrenginius";
+      linkToDevices.textContent = "Eiti į mano komplektus";
       linkToDevices.className = "ms-5";
-      linkToDevices.href = "/my-devices";
+      linkToDevices.href = "/my-assemblies";
     }
 
     // Append the link to the container

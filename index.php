@@ -19,7 +19,6 @@ require_once 'app/controllers/DeviceController.php';
 require_once 'app/controllers/DeviceController.php';
 require_once 'app/controllers/PartController.php';
 
-
 require_once 'config/config.php';
 require_once 'app/utils/utils.php';
 
@@ -44,33 +43,149 @@ $request = parse_url(trim($_SERVER['REQUEST_URI'], '/'), PHP_URL_PATH); // Parse
 $query = $_GET; // Capture query parameters like 'id'
 
 $routes = [
-    'register' => ['handler' => [$registerController, 'showRegisterForm'], 'roles' => []],                    // Accessible to everyone
-    'register/submit' => ['handler' => [$registerController, 'processRegisterForm'], 'roles' => []],          // Accessible to everyone
-    'login' => ['handler' => [$loginController, 'showLoginForm'], 'roles' => []],                             // Accessible to everyone
-    'login/submit' => ['handler' => [$loginController, 'processLoginForm'], 'roles' => []],                   // Accessible to everyone
-    'logout' => ['handler' => [$logoutController, 'logout'], 'roles' => []],                                  // Accessible to everyone
-    'dashboard' => ['handler' => [$dashboardController, 'showDashboard'], 'roles' => []],                     // Accessible to everyone
-    //'create-device' => ['handler' => [$deviceController, 'showDeviceCreationForm'], 'roles' => [2]],          // Technician only
-    'create-device' => ['handler' => [$deviceController, 'showDeviceCreationForm'], 'roles' => [2]],                // Technician only
-    'create-device/submit' => ['handler' => [$deviceController, 'processDeviceCreationForm'], 'roles' => [2]],      // Technician only
-    'create-part' => ['handler' => [$partController, 'showPartCreationForm'], 'roles' => [2]],                // Technician only
-    'create-part/submit' => ['handler' => [$partController, 'processPartCreationForm'], 'roles' => [2]],      // Technician only
-    'get-base' => ['handler' => [$deviceController, 'getDeviceData'], 'roles' => [1, 2]],                         // Admin and Technician
-    'get-parts' => ['handler' => [$partController, 'getPartsList'], 'roles' => [1, 2]],                       // Admin and Technician
-    'get-part' => ['handler' => [$partController, 'getPartById'], 'roles' => [1, 2]],                         // Admin and Technician
-    'get-device-list' => ['handler' => [$deviceController, 'getAllDevices'], 'roles' => [1, 2]],                    // Admin and Technician
-    'check-parts-availability' => ['handler' => [$partController, 'checkPartsAvailability'], 'roles' => [2]], // Technician
-    'my-devices' => ['handler' => [$deviceController, 'showTechniciansDevices'], 'roles' => [2]], // Technician
-    'delete-device' => ['handler' => [$deviceController, 'deleteDeviceById'], 'roles' => [2]], // Technician
-    'edit-devices' => ['handler' => [$deviceController, 'showDeviceEditForm'], 'roles' => [2]], // Technician
+    'register' => [
+        'handler' => [$registerController, 'showRegisterForm'],
+        'roles' => [],
+        'query_params' => []
+    ],
+    'register/submit' => [
+        'handler' => [$registerController, 'processRegisterForm'],
+        'roles' => [],
+        'query_params' => []
+    ],
+    'login' => [
+        'handler' => [$loginController, 'showLoginForm'],
+        'roles' => [],
+        'query_params' => []
+    ],
+    'login/submit' => [
+        'handler' => [$loginController, 'processLoginForm'],
+        'roles' => [],
+        'query_params' => []
+    ],
+    'logout' => [
+        'handler' => [$logoutController, 'logout'],
+        'roles' => [],
+        'query_params' => []
+    ],
+    'dashboard' => [
+        'handler' => [$dashboardController, 'showDashboard'],
+        'roles' => [],
+        'query_params' => []
+    ],
+    'create-device' => [
+        'handler' => [$deviceController, 'showDeviceCreationForm'],
+        'roles' => [2],
+        'query_params' => []
+    ],
+    'create-device/submit' => [
+        'handler' => [$deviceController, 'processDeviceCreationForm'],
+        'roles' => [2],
+        'query_params' => []
+    ],
+    'create-part' => [
+        'handler' => [$partController, 'showPartCreationForm'],
+        'roles' => [2],
+        'query_params' => []
+    ],
+    'create-part/submit' => [
+        'handler' => [$partController, 'processPartCreationForm'],
+        'roles' => [2],
+        'query_params' => []
+    ],
+    'get-device' => [
+        'handler' => [$deviceController, 'getDeviceData'],
+        'roles' => [1, 2, 3],
+        'query_params' => ['device_id']
+    ],
+    'get-parts' => [
+        'handler' => [$partController, 'getPartsList'],
+        'roles' => [1, 2],
+        'query_params' => ['part_type']
+    ],
+    'get-all-parts' => [
+        'handler' => [$partController, 'getAllPartsList'],
+        'roles' => [1, 2, 3],
+        'query_params' => []
+    ],
+    'get-part' => [
+        'handler' => [$partController, 'getPartById'],
+        'roles' => [1, 2],
+        'query_params' => ['part_id']
+    ],
+    'check-parts-availability' => [
+        'handler' => [$partController, 'checkPartsAvailability'],
+        'roles' => [2],
+        'query_params' => []
+    ],
+    'my-devices' => [
+        'handler' => [$deviceController, 'showTechniciansDevices'],
+        'roles' => [2],
+        'query_params' => []
+    ],
+    'delete-device' => [
+        'handler' => [$deviceController, 'deleteDeviceById'],
+        'roles' => [2],
+        'query_params' => []
+    ],
+    'edit-device' => [
+        'handler' => [$deviceController, 'showDeviceEditForm'],
+        'roles' => [2],
+        'query_params' => ['device_id']
+    ],
+    'edit-device/update' => [
+        'handler' => [$deviceController, 'processDeviceEdit'],
+        'roles' => [2],
+        'query_params' => []
+    ],
+    'assemble-device' => [
+        'handler' => [$deviceController, 'showDeviceAssembleForm'],
+        'roles' => [3],
+        'query_params' => ['device_id']
+    ],
+    'assemble-device/assemble' => [
+        'handler' => [$deviceController, 'processDeviceAssembly'],
+        'roles' => [3],
+        'query_params' => []
+    ],
+    'my-assemblies' => [
+        'handler' => [$deviceController, 'showUserAssemblies'],
+        'roles' => [3],
+        'query_params' => []
+    ],
+    'assembly-edit' => [
+        'handler' => [$deviceController, 'showAssemblyEditForm'],
+        'roles' => [3],
+        'query_params' => ['assembly_id']
+    ],
+    'assembly-edit/update' => [
+        'handler' => [$deviceController, 'processAssemblyEdit'],
+        'roles' => [3],
+        'query_params' => []
+    ],
+    'get-part-price' => [
+        'handler' => [$partController, 'getPartPrice'],
+        'roles' => [3],
+        'query_params' => ['part_id']
+    ],
 ];
 
 if (array_key_exists($request, $routes)) {
     $route = $routes[$request];
     $handler = $route['handler'];
     $allowedRoles = $route['roles'];
+    $expectedQueryParams = $route['query_params'];
 
-    if (empty($allowedRoles) || isUserLoggedIn() && isUserInRole($allowedRoles)) {
+    // Validate query parameters
+    $missingParams = array_diff($expectedQueryParams, array_keys($query));
+    if (!empty($missingParams)) {
+        http_response_code(400);
+        echo "400 Bad Request: Missing required query parameters: " . implode(', ', $missingParams);
+        exit;
+    }
+
+    // Check roles
+    if (empty($allowedRoles) || (isUserLoggedIn() && isUserInRole($allowedRoles))) {
         call_user_func($handler, $query);
     } else {
         http_response_code(403);

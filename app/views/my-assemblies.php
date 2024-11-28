@@ -30,8 +30,6 @@
     <?php
     include 'app/views/header.php';
     ?>
-    <?php global $deviceController;
-    $userDevices = $deviceController->getAllUserDevices(getUserId()); ?>
 
     <div class="container">
         <h2 class="mt-2 mb-4">Peržiūrėti mano įrenginius</h2>
@@ -41,20 +39,22 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Pavadinimas</th>
-                        <th>Konstravimo kaina</th>
+                        <th>Komplekto kaina</th>
+                        <th>Pilna kaina</th>
                         <th>Veiksmai</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($userDevices)) : ?>
-                        <?php foreach ($userDevices as $device) : ?>
+                    <?php if (isset($assemblyData)) : ?>
+                        <?php foreach ($assemblyData as $assembly) : ?>
                             <tr>
-                                <td><?= htmlspecialchars($device['device_name']); ?></td>
-                                <td><?= htmlspecialchars($device['device_cost']); ?> €</td>
+                                <td><?= htmlspecialchars($assembly['name']); ?></td>
+                                <td><?= htmlspecialchars($assembly['price']); ?> €</td>
+                                <td><?= htmlspecialchars($assembly['total_price']); ?> €</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <button class="btn btn-sm btn-primary edit-base-btn" data-device-id="<?= htmlspecialchars($device['device_id']); ?>">Redaguoti</button>
-                                        <button class="btn btn-sm btn-danger delete-base-btn" data-device-id="<?= htmlspecialchars($device['device_id']); ?>">Šalinti</button>
+                                        <button class="btn btn-sm btn-primary edit-base-btn" data-assembly-id="<?= htmlspecialchars($assembly['id']); ?>">Užsakyti</button>
+                                        <button class="btn btn-sm btn-primary edit-base-btn" data-assembly-id="<?= htmlspecialchars($assembly['id']); ?>">Redaguoti</button>
                                     </div>
                                 </td>
                             </tr>
@@ -67,14 +67,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="mt-3">
-            <a href="/create-device" class="btn btn-primary">Pridėti naują įrenginį</a>
-        </div>
     </div>
 
-
-
-    <script src="/assets/js/deviceActions.js"></script>
+    <script src="/assets/js/assemblyActions.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

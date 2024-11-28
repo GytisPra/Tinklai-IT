@@ -1,3 +1,4 @@
+<body data-bs-theme="dark" class="text-white"></body>
 <h2 class="mb-4">Įrenginiai</h2>
 
 <div class="d-flex gap-5 align-items-center">
@@ -7,6 +8,14 @@
             <select class="form-select bg-dark text-white" id="filter-options" aria-label="Filter Selection">
                 <option value="1">Kaina mažėjimo tvarka</option>
                 <option value="2">Kaina didėjimo tvarka</option>
+            </select>
+        </div>
+        <div class="col">
+            <label for="filter-options" class="form-label text-white">Filtruoti tipą</label>
+            <select class="form-select bg-dark text-white" id="filter-options" aria-label="Filter Selection">
+                <option value="0" class="text-secondary">Pasirinkite tipą</option>
+                <option value="1">Darbinis kompiuteris</option>
+                <option value="2">Žaidimo kompiuteris</option>
             </select>
         </div>
     </div>
@@ -19,45 +28,43 @@
             <input id="search" type="text" class="form-control rounded bg-dark text-white" placeholder="Pavadinimas" />
         </div>
     </div>
-    <?php if (isUserInRole([1, 2])): // Check if the user is a technician or admin
-    ?>
-        <div class="row">
-            <div class="col">
-                <a class="border p-2 rounded text-nowrap" href="/create-base">+Pridėti bazę</a>
-            </div>
-            <div class="col">
-                <a class="border p-2 rounded text-nowrap" href="/create-device">+Pridėti įrenginį</a>
-            </div>
-            <div class="col">
-                <a class="border p-2 rounded text-nowrap" href="/create-part">+Pridėti dalį</a>
-            </div>
-        </div>
-    <?php endif; ?>
 </div>
 
-<table class="table pb-2 mt-2 text-white">
-    <thead>
-        <tr>
-            <th scope="col">Nuotrauka</th>
-            <th class="text-center" scope="col">Pavadinimas</th>
-            <th class="text-center" scope="col">Kaina</th>
-            <th class="text-center" scope="col">Aprašymas</th>
-            <th class="text-center" scope="col">Veiksmas</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php for ($i = 0; $i < 10; $i++) { ?>
-            <tr key=<?php echo htmlspecialchars("device-$i", ENT_QUOTES, 'UTF-8'); ?>>
-                <td scope="row">
-                    <?php include 'assets/icons/placeholder-image.svg'; ?>
-                </td>
-                <td class="text-center">Pavadinimas</td>
-                <td class="text-center">0.00$</td>
-                <td class="text-center">TRUMPAS APRAŠYMAS</td>
-                <td class="text-center">
-                    <a href="<?php echo htmlspecialchars("device-$i", ENT_QUOTES, 'UTF-8'); ?>">Peržiūrėti</a>
-                </td>
+<?php global $deviceController;
+$allDevices = $deviceController->getAllDevices(); ?>
+
+<div class="table-responsive">
+    <table class="table mt-5 table-striped table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Pavadinimas</th>
+                <th>Konstravimo kaina</th>
+                <th>Veiksmai</th>
             </tr>
-        <?php } ?>
-    </tbody>
+        </thead>
+        <tbody>
+            <?php if (!empty($allDevices)) : ?>
+                <?php foreach ($allDevices as $device) : ?>
+                    <tr>
+                        <td><?= htmlspecialchars($device['device_name']); ?></td>
+                        <td><?= htmlspecialchars($device['device_cost']); ?> €</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="/assemble-device?device_id=<?= htmlspecialchars($device['device_id']); ?>" class="btn btn-sm btn-primary edit-base-btn">Komplektuoti</a>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <tr>
+                    <td colspan="11" class="text-center">Nerasta jokių duomenų</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
 </table>
+</body>
+
+</html>

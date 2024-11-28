@@ -29,9 +29,19 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <?php if (isUserInRole([2]) && isUserLoggedIn()): ?>
+                    <?php if (isUserInRole([1, 2]) && isUserLoggedIn()): ?>
                         <a class="pe-2" href="/my-devices">
                             <span>Mano įrenginiai</span>
+                        </a>
+                        <a class="pe-2" href="/create-device">
+                            <span>+Pridėti įrenginį</span>
+                        </a>
+                        <a class="pe-2" href="/create-part">
+                            <span>+Pridėti dalį</span>
+                        </a>
+                    <?php elseif (isUserInRole([3]) && isUserLoggedIn()): ?>
+                        <a class="pe-2" href="/my-assemblies">
+                            <span>Mano komplektai</span>
                         </a>
                     <?php endif; ?>
                     <?php
