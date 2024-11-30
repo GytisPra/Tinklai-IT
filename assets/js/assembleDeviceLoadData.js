@@ -66,8 +66,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         listItem.className =
           "list-group-item text-white d-flex justify-content-between align-items-center";
 
-        let innerHTMLContent = `<div class="ms-2 me-auto d-flex flex-column" id="${config.partType}"> 
-            <div class="fw-bold">${config.nameLt}</div>`;
+        let innerHTMLContent = `<div class="ms-2 me-auto d-flex flex-column" id="${
+          config.partType
+        }"> 
+            <div class="fw-bold ${readOnly ? "text-secondary" : ""}">${
+          config.nameLt
+        }</div>`;
 
         const partIds = devicesData[`${config.partType}_ids`];
         const partNames = devicesData[`${config.partType}_names`];
@@ -102,7 +106,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           // Generate HTML for parts
           partDetails.forEach(({ id, name, price, isChecked }) => {
             innerHTMLContent += `<div class="form-check">
-              <input ${isChecked ? "checked" : ""} value="${id}" name="${
+              <input ${isChecked ? "checked" : ""} ${
+              readOnly ? "disabled" : ""
+            } value="${id}" name="${
               config.partType
             }_id" class="form-check-input bg-dark" type="radio" id="${id}">
               <label class="form-check-label" for="${id}">

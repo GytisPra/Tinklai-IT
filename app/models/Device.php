@@ -142,7 +142,7 @@ class Device
     }
 
 
-    public function getAllDevices()
+    public function getAllDevices($sortOrder)
     {
         $query = "
         SELECT
@@ -168,6 +168,11 @@ class Device
         GROUP BY
             device.id
         ";
+
+        match ($sortOrder) {
+            1 => $query .= " ORDER BY device.construction_cost DESC",
+            2 => $query .= " ORDER BY device.construction_cost ASC",
+        };
 
         $stmt = $this->mysqli->prepare($query);
 
@@ -589,6 +594,42 @@ class Device
         }
 
         return $assemblyData; // Return the assembly data with the total price added
+    }
+
+    public function deleteAssembly($assemblyId)
+    {
+        // Start a transaction to ensure consistency
+        $this->mysqli->begin_transaction();
+
+        try {
+            // Delete related orders
+            $orderQuery = "DELETE FROM `order` WHERE assembly_id = ?";
+            $orderStmt = $this->mysqli->prepare($orderQuery);
+            if (!$orderStmt) {
+                throw new Exception("Prepare failed for order deletion: " . $this->mysqli->error);
+            }
+            $orderStmt->bind_param("i", $assemblyId);
+            $orderStmt->execute();
+            $orderStmt->close();
+
+            // Delete the assembly
+            $assemblyQuery = "DELETE FROM user_assembly WHERE id = ?";
+            $assemblyStmt = $this->mysqli->prepare($assemblyQuery);
+            if (!$assemblyStmt) {
+                throw new Exception("Prepare failed for assembly deletion: " . $this->mysqli->error);
+            }
+            $assemblyStmt->bind_param("i", $assemblyId);
+            $assemblyStmt->execute();
+            $assemblyStmt->close();
+
+            // Commit the transaction
+            $this->mysqli->commit();
+            return true;
+        } catch (Exception $e) {
+            // Roll back the transaction in case of error
+            $this->mysqli->rollback();
+            throw $e;
+        }
     }
 
     public function getTotalAssemblyPrice($assemblyId)

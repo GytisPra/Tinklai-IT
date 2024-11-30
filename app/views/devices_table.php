@@ -6,16 +6,9 @@
         <div class="col">
             <label for="filter-options" class="form-label text-white">Rikiuoti pagal</label>
             <select class="form-select bg-dark text-white" id="filter-options" aria-label="Filter Selection">
+                <option selected>Pasirinkite filtravimą</option>
                 <option value="1">Kaina mažėjimo tvarka</option>
                 <option value="2">Kaina didėjimo tvarka</option>
-            </select>
-        </div>
-        <div class="col">
-            <label for="filter-options" class="form-label text-white">Filtruoti tipą</label>
-            <select class="form-select bg-dark text-white" id="filter-options" aria-label="Filter Selection">
-                <option value="0" class="text-secondary">Pasirinkite tipą</option>
-                <option value="1">Darbinis kompiuteris</option>
-                <option value="2">Žaidimo kompiuteris</option>
             </select>
         </div>
     </div>
@@ -30,11 +23,14 @@
     </div>
 </div>
 
-<?php global $deviceController;
-$allDevices = $deviceController->getAllDevices(); ?>
+<div class="table-responsive" style="position: relative;"> <!-- Make this relative to position the overlay within it -->
+    <div id="loadingOverlay" class="bg-dark" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; color: white; display: flex; align-items: center; justify-content: center; z-index: 1000">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
-<div class="table-responsive">
-    <table class="table mt-5 table-striped table-hover table-bordered">
+    <table id="device_table" class="table mt-5 table-striped table-hover table-bordered" style="position: relative;">
         <thead class="table-dark">
             <tr>
                 <th>Pavadinimas</th>
@@ -42,29 +38,10 @@ $allDevices = $deviceController->getAllDevices(); ?>
                 <th>Veiksmai</th>
             </tr>
         </thead>
-        <tbody>
-            <?php if (!empty($allDevices)) : ?>
-                <?php foreach ($allDevices as $device) : ?>
-                    <tr>
-                        <td><?= htmlspecialchars($device['device_name']); ?></td>
-                        <td><?= htmlspecialchars($device['device_cost']); ?> €</td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <a href="/assemble-device?device_id=<?= htmlspecialchars($device['device_id']); ?>" class="btn btn-sm btn-primary edit-base-btn">Komplektuoti</a>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else : ?>
-                <tr>
-                    <td colspan="11" class="text-center">Nerasta jokių duomenų</td>
-                </tr>
-            <?php endif; ?>
+        <tbody id="device_table_body">
         </tbody>
     </table>
 </div>
 
-</table>
+<script src="/assets/js/deviceTableLoad.js"></script>
 </body>
-
-</html>

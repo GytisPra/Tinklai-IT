@@ -34,7 +34,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       .then((data) => {
         if (data.success && data.authenticated) {
           clearError();
-          window.location.href = "/dashboard";
+          if (data.redirectTo) {
+            window.location.href = data.redirectTo;
+          } else {
+            window.location.href = "/dashboard";
+          }
         } else if (!data.authenticated) {
           displayError(data.message || "Neteisingi prisijungimo duomenys");
         } else {

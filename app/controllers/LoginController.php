@@ -27,40 +27,64 @@ class LoginController
         try {
             $result = $this->userModel->authenticate(
                 $_POST['username'] ?? '',
-                $_POST['password'] ?? '',
+                $_POST['password'] ?? ''
             );
 
-            // Prepare response
-            if ($isAjax && $result) {
-                header('Content-Type: application/json');
-                echo json_encode([
-                    'authenticated' => true,
-                    'success' => true,
-                ]);
+            // If authentication is successful
+            if ($result) {
                 $_SESSION['user'] = $result;
-                exit;
-            } elseif (!$result) {
+
+                if ($isAjax) {
+                    $redirectUrl = isset($_SESSION['redirect_after_login']) ? $_SESSION['redirect_after_login'] : '';
+                    unset($_SESSION['redirect_after_login']);
+
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'authenticated' => true,
+                        'success' => true,
+                        'redirectTo' => $redirectUrl
+                    ]);
+                    exit;
+                } else {
+                    if (isset($_SESSION['redirect_after_login'])) {
+                        $redirectUrl = $_SESSION['redirect_after_login'];
+                        unset($_SESSION['redirect_after_login']); // Clear session variable
+                        header("Location: $redirectUrl");
+                    } else {
+                        header("Location: /dashboard");
+                    }
+                    exit;
+                }
+            }
+
+            // If authentication fails
+            if ($isAjax) {
                 header('Content-Type: application/json');
                 echo json_encode([
                     'authenticated' => false,
                     'success' => false,
+                    'message' => 'Neteisingi prisijungimo duomenys',
                 ]);
-                exit;
             } else {
-                // Traditional form submission
-                header("Location: /dashboard");
-                exit;
+                $_SESSION['login_error'] = "Neteisingi prisijungimo duomenys.";
+                header("Location: /login");
             }
+            exit;
         } catch (Exception $e) {
             if ($isAjax) {
+                // AJAX error response
                 header('Content-Type: application/json');
                 http_response_code(400); // Bad Request
                 echo json_encode([
                     'success' => false,
-                    'message' => $e->getMessage()
+                    'message' => $e->getMessage(),
                 ]);
-                exit;
+            } else {
+                // Traditional form error handling
+                $_SESSION['login_error'] = $e->getMessage();
+                header("Location: /login");
             }
+            exit;
         }
     }
 }

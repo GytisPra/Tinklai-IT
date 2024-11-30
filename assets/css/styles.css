@@ -1,5 +1,7 @@
 body {
     height: 100vh;
+    background-color: rgb(29, 34, 43);
+    color: white;
 }
 
 a {

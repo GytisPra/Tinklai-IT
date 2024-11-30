@@ -10,14 +10,15 @@ error_reporting(E_ALL);
 require_once 'app/models/User.php';
 require_once 'app/models/Device.php';
 require_once 'app/models/Part.php';
+require_once 'app/models/Order.php';
 
 require_once 'app/controllers/RegisterController.php';
 require_once 'app/controllers/LoginController.php';
 require_once 'app/controllers/LogoutController.php';
 require_once 'app/controllers/DashboardController.php';
 require_once 'app/controllers/DeviceController.php';
-require_once 'app/controllers/DeviceController.php';
 require_once 'app/controllers/PartController.php';
+require_once 'app/controllers/OrderController.php';
 
 require_once 'config/config.php';
 require_once 'app/utils/utils.php';
@@ -30,6 +31,9 @@ $mysqli = new mysqli(HOSTNAME, USERNAME, PASSWORD, DATABASE);
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
+
+$mysqli->set_charset('utf8mb4');
+
 $userModel = new User($mysqli);
 
 $registerController = new RegisterController($userModel);
@@ -38,6 +42,8 @@ $dashboardController = new DashboardController();
 $logoutController = new LogoutController();
 $deviceController = new DeviceController();
 $partController = new PartController();
+$orderController = new OrderController();
+
 
 $request = parse_url(trim($_SERVER['REQUEST_URI'], '/'), PHP_URL_PATH); // Parse the URI path
 $query = $_GET; // Capture query parameters like 'id'
@@ -123,6 +129,11 @@ $routes = [
         'roles' => [2],
         'query_params' => []
     ],
+    'get-all-devices' => [
+        'handler' => [$deviceController, 'getAllDevices'],
+        'roles' => [],
+        'query_params' => ['sort_order']
+    ],
     'delete-device' => [
         'handler' => [$deviceController, 'deleteDeviceById'],
         'roles' => [2],
@@ -160,13 +171,38 @@ $routes = [
     ],
     'assembly-edit/update' => [
         'handler' => [$deviceController, 'processAssemblyEdit'],
+        'roles' => [1, 2, 3],
+        'query_params' => []
+    ],
+    'assembly-delete' => [
+        'handler' => [$deviceController, 'deleteAssembly'],
         'roles' => [3],
         'query_params' => []
     ],
     'get-part-price' => [
         'handler' => [$partController, 'getPartPrice'],
-        'roles' => [3],
+        'roles' => [1, 2, 3],
         'query_params' => ['part_id']
+    ],
+    'assembly-order' => [
+        'handler' => [$orderController, 'orderAssembly'],
+        'roles' => [3],
+        'query_params' => []
+    ],
+    'assembly-view' => [
+        'handler' => [$deviceController, 'showAssemblyEditForm'],
+        'roles' => [1],
+        'query_params' => ['assembly_id']
+    ],
+    'orders' => [
+        'handler' => [$orderController, 'showUserOrders'],
+        'roles' => [1, 3],
+        'query_params' => []
+    ],
+    'update-order-status' => [
+        'handler' => [$orderController, 'updateOrderStatus'],
+        'roles' => [1, 3],
+        'query_params' => []
     ],
 ];
 
@@ -188,8 +224,23 @@ if (array_key_exists($request, $routes)) {
     if (empty($allowedRoles) || (isUserLoggedIn() && isUserInRole($allowedRoles))) {
         call_user_func($handler, $query);
     } else {
-        http_response_code(403);
-        echo "403 Forbidden: You do not have access to this route.";
+        if (!isUserLoggedIn()) {
+            $queryString = http_build_query($query);
+
+            if (!empty($queryString)) {
+                $_SESSION['redirect_after_login'] = '/' . $request . '?' . $queryString;
+            } else {
+                $_SESSION['redirect_after_login'] = '/' . $request;
+            }
+
+
+            header("Location: /login");
+            echo $_SESSION['redirect_after_login'];
+            exit;
+        } else {
+            http_response_code(403);
+            echo "403 Forbidden: Jūs neturite reikiamos roles šiam puslapiui. <a href='/dashboard'>Grįžti į pagrindinį puslapį</a>";
+        }
     }
 } else if ($request === "index.php" || empty($request)) {
     header('Location: /dashboard');

@@ -29,27 +29,32 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <?php if (isUserInRole([1, 2]) && isUserLoggedIn()): ?>
-                        <a class="pe-2" href="/my-devices">
-                            <span>Mano įrenginiai</span>
-                        </a>
-                        <a class="pe-2" href="/create-device">
-                            <span>+Pridėti įrenginį</span>
-                        </a>
-                        <a class="pe-2" href="/create-part">
-                            <span>+Pridėti dalį</span>
-                        </a>
-                    <?php elseif (isUserInRole([3]) && isUserLoggedIn()): ?>
-                        <a class="pe-2" href="/my-assemblies">
-                            <span>Mano komplektai</span>
-                        </a>
-                    <?php endif; ?>
-                    <?php
-                    if (isUserLoggedIn()): ?>
-                        <a href="/profile">
-                            <?php include 'assets/icons/profile-icon.svg'; ?>
-                            <span>Profilis</span>
-                        </a>
+                    <?php if (isUserLoggedIn()): ?>
+                        <?php if (isUserInRole([2])): ?>
+                            <a href="/my-devices">
+                                <span>Mano įrenginiai</span>
+                            </a>
+                            <span class="mx-2">|</span>
+                            <a href="/create-device">
+                                <span>+Pridėti įrenginį</span>
+                            </a>
+                            <span class="mx-2">|</span>
+                            <a href="/create-part">
+                                <span>+Pridėti dalį</span>
+                            </a>
+                        <?php elseif (isUserInRole([3])): ?>
+                            <a href="/my-assemblies">
+                                <span>Mano komplektai</span>
+                            </a>
+                            <span class="mx-2">|</span>
+                            <a href="/orders">
+                                <span>Užsakymų krepšelis</span>
+                            </a>
+                        <?php elseif (isUserInRole([1])): ?>
+                            <a class="pe-2" href="/orders">
+                                <span>Peržiūrėti užsakymus</span>
+                            </a>
+                        <?php endif; ?>
                         <span class="mx-2">|</span>
                         <a href="/logout" class="text-decoration-none">
                             <?php include 'assets/icons/logout-icon.svg'; ?>

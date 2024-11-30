@@ -4,7 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($assembly) ? 'Redaguoti komplektą' : 'Komplektuoti įrenginį' ?></title>
+    <title>
+        <?php if (isset($assembly)): ?>
+            <?= isUserInRole([1, 2]) ? "Peržiūrėti komplektą" : "Redaguoti komplektą"; ?>
+        <?php else: ?>
+            Komplektuoti įrenginį
+        <?php endif; ?>
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/styles.css" rel="stylesheet">
 </head>
@@ -13,14 +19,27 @@
     <?php include 'app/views/header.php'; ?>
 
     <div class="container">
-        <h2 class="mt-2 mb-4"><?= isset($assembly) ? 'Redaguoti komplektą' : 'Komplektuoti įrenginį' ?></h2>
+        <h2 class="mt-2 mb-4">
+            <?php if (isset($assembly)): ?>
+                <?= isUserInRole([1, 2]) ? "Peržiūrėti komplektą" : "Redaguoti komplektą"; ?>
+            <?php else: ?>
+                Komplektuoti įrenginį
+            <?php endif; ?>
+        </h2>
         <form method="POST" id="deviceForm" action="<?= isset($device) ? '/edit-device' : '/create-device' ?>">
             <input type="hidden" name="device_id" value="<?= isset($device) ? $device['device_id'] : '' ?>" />
             <div class="row">
                 <div class="mb-3 col">
                     <div class="input-group">
                         <span class="input-group-text col-2">Komplekto pavadinimas</span>
-                        <input type="text" class="form-control text-white bg-dark" id="name" name="name" required value="<?= isset($assembly) ? $assembly['name'] : '' ?>" />
+                        <input
+                            type="text"
+                            class="form-control  <?= isUserInRole([1, 2]) ? "" : "text-white" ?> bg-dark"
+                            <?= isUserInRole([1, 2]) ? "disabled" : "" ?>
+                            id="name"
+                            name="name"
+                            required
+                            value="<?= isset($assembly) ? $assembly['name'] : '' ?>" />
                     </div>
 
                 </div>
@@ -62,7 +81,7 @@
                 </div>
             </div>
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary"><?= isset($assembly) ? 'Atnaujinti' : 'Pridėti' ?></button>
+                <button type="submit" class="btn btn-primary <?= isUserInRole([1, 2]) ? "d-none" : "" ?>"><?= isset($assembly) ? 'Atnaujinti' : 'Pridėti' ?></button>
             </div>
         </form>
     </div>
@@ -73,6 +92,7 @@
     <script>
         const deviceData = <?= isset($device) ? json_encode($device, JSON_HEX_TAG | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_APOS) : 'null' ?>;
         const assemblyData = <?= isset($assembly) ? json_encode($assembly, JSON_HEX_TAG | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_APOS) : 'null' ?>;
+        const readOnly = <?= isUserInRole([1, 2]) ? "true" : "false"  ?>
     </script>
 </body>
 

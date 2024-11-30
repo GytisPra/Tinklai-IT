@@ -155,14 +155,23 @@ class DeviceController
         }
     }
 
-    public function getAllDevices()
+    public function getAllDevices($query)
     {
-        $deviceData = $this->deviceModel->getAllDevices();
+        header('Content-Type: application/json');
 
-        if ($deviceData) {
-            return $deviceData;
+        if (isset($query['sort_order'])) {
+            $sortOrder = intval($query['sort_order']);
+            $devicesData = $this->deviceModel->getAllDevices($sortOrder);
+
+            if ($devicesData) {
+                echo json_encode($devicesData); // Return JSON data
+            } else {
+                http_response_code(404);
+                echo json_encode(['error' => 'No devices found']);
+            }
         } else {
-            echo 'error No devices found';
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid sort order']);
         }
     }
 
@@ -195,6 +204,32 @@ class DeviceController
         } else {
             http_response_code(405);
             echo json_encode(['status' => 'error', 'message' => 'Invalid request method']);
+        }
+    }
+
+    public function deleteAssembly()
+    {
+        header('Content-Type: application/json');
+        if (isset($_POST['assembly_id'])) {
+            $assemblyId = intval($_POST['assembly_id']);
+            $result = $this->deviceModel->deleteAssembly($assemblyId);
+
+            if ($result) {
+                http_response_code(200);
+                echo json_encode([
+                    'success' => true,
+                ]);
+            } else {
+                http_response_code(404);
+                echo json_encode([
+                    'error' => 'Assembly could not be deleted. Assembly data not found',
+                    'assemblyId' => $assemblyId,
+                    'result' => $result
+                ]);
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Assembly ID not provided']);
         }
     }
 
