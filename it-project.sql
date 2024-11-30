@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2024 at 04:12 PM
+-- Generation Time: Nov 30, 2024 at 10:40 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -112,6 +112,85 @@ INSERT INTO `device_parts` (`id`, `fk_device_id`, `fk_part_id`) VALUES
 (527, 109, 25),
 (528, 109, 16),
 (529, 109, 26);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order`
+--
+
+CREATE TABLE `order` (
+  `id` int(11) NOT NULL,
+  `ordered_by` int(11) NOT NULL,
+  `total_price` int(11) NOT NULL,
+  `order_status` int(11) NOT NULL,
+  `assembly_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `order`
+--
+
+INSERT INTO `order` (`id`, `ordered_by`, `total_price`, `order_status`, `assembly_id`) VALUES
+(86, 23, 896, 1, 16),
+(87, 23, 896, 4, 16),
+(88, 23, 896, 4, 16),
+(89, 23, 896, 4, 16),
+(90, 23, 896, 4, 16),
+(91, 23, 896, 4, 16),
+(92, 23, 896, 4, 16),
+(93, 23, 896, 4, 16),
+(94, 23, 896, 4, 16),
+(95, 23, 896, 4, 16),
+(96, 23, 896, 4, 16),
+(97, 23, 896, 4, 16),
+(98, 23, 896, 4, 16),
+(99, 23, 896, 4, 16),
+(100, 23, 896, 4, 16),
+(101, 23, 896, 4, 16),
+(102, 23, 896, 4, 16),
+(103, 23, 896, 4, 16),
+(104, 23, 896, 4, 16),
+(105, 23, 896, 4, 16),
+(106, 23, 896, 1, 16),
+(107, 23, 896, 2, 16),
+(108, 23, 896, 2, 16),
+(109, 23, 896, 1, 16),
+(110, 23, 896, 4, 16),
+(111, 23, 896, 4, 16),
+(112, 23, 896, 4, 16),
+(113, 23, 896, 4, 16),
+(114, 23, 896, 4, 16),
+(115, 23, 896, 4, 16),
+(116, 23, 896, 4, 16),
+(117, 23, 896, 4, 16),
+(118, 23, 896, 4, 16),
+(119, 23, 896, 4, 16),
+(120, 23, 896, 4, 16),
+(121, 23, 896, 4, 16),
+(122, 23, 896, 4, 16),
+(123, 23, 1007, 4, 17);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order_states`
+--
+
+CREATE TABLE `order_states` (
+  `id` int(11) NOT NULL,
+  `name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `order_states`
+--
+
+INSERT INTO `order_states` (`id`, `name`) VALUES
+(1, 'Vykdomas'),
+(2, 'Gautas'),
+(3, 'Priimtas'),
+(4, 'Atšauktas');
 
 -- --------------------------------------------------------
 
@@ -251,11 +330,8 @@ CREATE TABLE `user_assembly` (
 --
 
 INSERT INTO `user_assembly` (`id`, `fk_belongs_to`, `name`, `price`, `device_id`, `processor_id`, `motherboard_id`, `screen_id`, `memory_id`, `graphics_card_id`, `storage_id`, `cooling_id`, `os_id`) VALUES
-(10, 23, 'Mano darbinis kompiuteris', 100.5, 107, 13, 14, 16, 18, 41, 23, 25, 26),
-(11, 23, 'Darbinis kompiuteris', 100.5, 107, 13, 14, 16, 18, 22, 23, 25, 26),
-(12, 23, 'Darbinis kompiuteris', 100.5, 107, 13, 14, 16, 18, 22, 23, 25, 26),
-(13, 23, 'VISKAS', 200, 108, 13, 15, 16, 18, 41, 23, 25, 26),
-(14, 23, 'a', 100.5, 107, 13, 14, 16, 18, 22, 23, 25, 26);
+(16, 23, 'Komplektas', 200, 108, 13, 14, 16, 19, 22, 23, 25, 26),
+(17, 23, 'GERAS', 200, 108, 13, 15, 16, 20, 21, 24, 25, 26);
 
 --
 -- Indexes for dumped tables
@@ -281,6 +357,21 @@ ALTER TABLE `device_parts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_device_id` (`fk_device_id`),
   ADD KEY `fk_part_id` (`fk_part_id`);
+
+--
+-- Indexes for table `order`
+--
+ALTER TABLE `order`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_ibfk_1` (`assembly_id`),
+  ADD KEY `order_ibfk_2` (`ordered_by`),
+  ADD KEY `order_ibfk_3` (`order_status`);
+
+--
+-- Indexes for table `order_states`
+--
+ALTER TABLE `order_states`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `part`
@@ -347,6 +438,18 @@ ALTER TABLE `device_parts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=530;
 
 --
+-- AUTO_INCREMENT for table `order`
+--
+ALTER TABLE `order`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
+
+--
+-- AUTO_INCREMENT for table `order_states`
+--
+ALTER TABLE `order_states`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `part`
 --
 ALTER TABLE `part`
@@ -374,7 +477,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `user_assembly`
 --
 ALTER TABLE `user_assembly`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Constraints for dumped tables
@@ -392,6 +495,14 @@ ALTER TABLE `device`
 ALTER TABLE `device_parts`
   ADD CONSTRAINT `device_parts_ibfk_1` FOREIGN KEY (`fk_device_id`) REFERENCES `device` (`id`),
   ADD CONSTRAINT `device_parts_ibfk_2` FOREIGN KEY (`fk_part_id`) REFERENCES `part` (`id`);
+
+--
+-- Constraints for table `order`
+--
+ALTER TABLE `order`
+  ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`assembly_id`) REFERENCES `user_assembly` (`id`),
+  ADD CONSTRAINT `order_ibfk_2` FOREIGN KEY (`ordered_by`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `order_ibfk_3` FOREIGN KEY (`order_status`) REFERENCES `order_states` (`id`);
 
 --
 -- Constraints for table `part`
