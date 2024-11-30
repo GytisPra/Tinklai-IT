@@ -25,7 +25,12 @@ require_once 'app/utils/utils.php';
 
 
 // Create a mysqli connection for database
-$mysqli = new mysqli(HOSTNAME, USERNAME, PASSWORD, DATABASE);
+$db_host = getenv('DB_HOST');
+$db_user = getenv('DB_USER');
+$db_pass = getenv('DB_PASSWORD');
+$db_name = getenv('DB_NAME');
+
+$mysqli = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
 // Check for connection errors
 if ($mysqli->connect_error) {
