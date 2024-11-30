@@ -1,7 +1,7 @@
 <?php
 
 // TODO: Sutvarkyti irenginio ištrinimą. Patikrinti viska su detaliu kurimu
-// mano manymu turetu but taip kai yra pašalinama įrenginys vartotojas nebegali redaguoti savo komplekto, kadangi nebėra bazes
+// mano manymu turetu but taip kai yra pašalinamas įrenginys vartotojas nebegali redaguoti savo komplekto, kadangi nebėra bazes
 // pagal ką redaguoti, tai reiškia, kad 'device_id' stulpelis gali būt null 'user_assembly' lentelėje
 
 // index.php
