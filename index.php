@@ -1,4 +1,7 @@
 <?php
+
+// TODO: Sutvarkyti irenginio ištrinimą. Patikrinti viska su detaliu kurimu
+
 // index.php
 session_start();
 
