@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2024 at 10:40 PM
+-- Generation Time: Dec 02, 2024 at 12:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -24,25 +24,6 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `computer_types`
---
-
-CREATE TABLE `computer_types` (
-  `id_computer_types` int(11) NOT NULL,
-  `name` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Dumping data for table `computer_types`
---
-
-INSERT INTO `computer_types` (`id_computer_types`, `name`) VALUES
-(1, 'Darbinis kompiuteris'),
-(2, 'Žaidimų kompiuteris');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `device`
 --
 
@@ -58,9 +39,8 @@ CREATE TABLE `device` (
 --
 
 INSERT INTO `device` (`id`, `name`, `construction_cost`, `fk_created_by`) VALUES
-(107, 'Darbinis kompiuteris', 100.5, 22),
-(108, 'VISKAS', 200, 22),
-(109, 'Dar vienas darbinis kompas', 200, 22);
+(112, 'Žaidimų kompiuteris', 249.99, 22),
+(113, 'Multimedijos kompiuteris', 289.99, 22);
 
 -- --------------------------------------------------------
 
@@ -79,39 +59,28 @@ CREATE TABLE `device_parts` (
 --
 
 INSERT INTO `device_parts` (`id`, `fk_device_id`, `fk_part_id`) VALUES
-(497, 107, 14),
-(498, 107, 18),
-(499, 107, 23),
-(500, 107, 13),
-(501, 107, 22),
-(502, 107, 41),
-(503, 107, 25),
-(504, 107, 16),
-(505, 107, 26),
-(506, 108, 14),
-(507, 108, 15),
-(508, 108, 17),
-(509, 108, 18),
-(510, 108, 19),
-(511, 108, 20),
-(512, 108, 23),
-(513, 108, 24),
-(514, 108, 13),
-(515, 108, 21),
-(516, 108, 22),
-(517, 108, 41),
-(518, 108, 25),
-(519, 108, 27),
-(520, 108, 16),
-(521, 108, 26),
-(522, 109, 14),
-(523, 109, 17),
-(524, 109, 23),
-(525, 109, 13),
-(526, 109, 41),
-(527, 109, 25),
-(528, 109, 16),
-(529, 109, 26);
+(608, 112, 15),
+(609, 112, 20),
+(610, 112, 23),
+(611, 112, 24),
+(612, 112, 13),
+(613, 112, 21),
+(614, 112, 22),
+(615, 112, 25),
+(616, 112, 27),
+(617, 112, 16),
+(618, 112, 26),
+(619, 113, 14),
+(620, 113, 18),
+(621, 113, 20),
+(622, 113, 23),
+(623, 113, 24),
+(624, 113, 13),
+(625, 113, 21),
+(626, 113, 22),
+(627, 113, 27),
+(628, 113, 16),
+(629, 113, 26);
 
 -- --------------------------------------------------------
 
@@ -132,44 +101,8 @@ CREATE TABLE `order` (
 --
 
 INSERT INTO `order` (`id`, `ordered_by`, `total_price`, `order_status`, `assembly_id`) VALUES
-(86, 23, 896, 1, 16),
-(87, 23, 896, 4, 16),
-(88, 23, 896, 4, 16),
-(89, 23, 896, 4, 16),
-(90, 23, 896, 4, 16),
-(91, 23, 896, 4, 16),
-(92, 23, 896, 4, 16),
-(93, 23, 896, 4, 16),
-(94, 23, 896, 4, 16),
-(95, 23, 896, 4, 16),
-(96, 23, 896, 4, 16),
-(97, 23, 896, 4, 16),
-(98, 23, 896, 4, 16),
-(99, 23, 896, 4, 16),
-(100, 23, 896, 4, 16),
-(101, 23, 896, 4, 16),
-(102, 23, 896, 4, 16),
-(103, 23, 896, 4, 16),
-(104, 23, 896, 4, 16),
-(105, 23, 896, 4, 16),
-(106, 23, 896, 1, 16),
-(107, 23, 896, 2, 16),
-(108, 23, 896, 2, 16),
-(109, 23, 896, 1, 16),
-(110, 23, 896, 4, 16),
-(111, 23, 896, 4, 16),
-(112, 23, 896, 4, 16),
-(113, 23, 896, 4, 16),
-(114, 23, 896, 4, 16),
-(115, 23, 896, 4, 16),
-(116, 23, 896, 4, 16),
-(117, 23, 896, 4, 16),
-(118, 23, 896, 4, 16),
-(119, 23, 896, 4, 16),
-(120, 23, 896, 4, 16),
-(121, 23, 896, 4, 16),
-(122, 23, 896, 4, 16),
-(123, 23, 1007, 4, 17);
+(124, 25, 1127, 2, 18),
+(125, 25, 1127, 4, 18);
 
 -- --------------------------------------------------------
 
@@ -226,7 +159,9 @@ INSERT INTO `part` (`id`, `name`, `price`, `left_in_storage`, `part_type`) VALUE
 (25, 'Oras', 80, 8, 7),
 (26, 'Windows 11', 180, 9, 8),
 (27, 'Skystis', 90, 10, 7),
-(41, 'Integruota', 1, 1000, 5);
+(41, 'Integruota', 1, 1000, 5),
+(43, 'SSD 256GB', 49, 10, 6),
+(56, 'Core i5 14600K', 257, 5, 1);
 
 -- --------------------------------------------------------
 
@@ -287,21 +222,19 @@ CREATE TABLE `user` (
   `email` varchar(50) NOT NULL,
   `username` varchar(25) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `role` int(11) NOT NULL,
-  `createdAt` date NOT NULL,
-  `updatedAt` date NOT NULL
+  `role` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `name`, `lastname`, `phone_number`, `email`, `username`, `password`, `role`, `createdAt`, `updatedAt`) VALUES
-(12, 'Gytis', 'Pranauskas', '+37069422844', 'worker@gmail.com', 'gpgytis', '$2y$10$leudoEhMvf547SISu6lkueJVdbUBP0VpPWOZk5kCezaXz60zJ7o5q', 2, '2024-11-19', '2024-11-19'),
-(20, 'Jonas', 'Vadybininkas', '+37077777777', 'vadyb@gmail.com', 'vadyb', '$2y$10$ljTXv8kCvn4kndbyDMNIVuz6v2hrgFfxbjdoh3gW/J5WD0wpsfQ9W', 1, '2024-11-27', '2024-11-27'),
-(22, 'Jonas', 'Technikas', '+37077777777', 'techn@gamil.com', 'techn', '$2y$10$8ZU6gDOX15g2FpVcddY62u3pXTMqwi3M6Lp93uE2Q1Vbjbmv0Mjbq', 2, '2024-11-27', '2024-11-27'),
-(23, 'Jonas', 'Vartotojas', '+37077777777', 'vartot@gmail.com', 'vartot', '$2y$10$7Rh2bHW9b34m7mxd1uQdoOgTuc9EX1jwTimNPFgG.A7torZWgkxa2', 3, '2024-11-27', '2024-11-27'),
-(24, 'Gytis', 'Pranauskas', '+37069422844', 'vartot@gmail.com', 'vartot', '$2y$10$oHsUCYracq9pbEcowxMfaeJ8wN8gQxwExZgK.m4lGqLCQMHHEct3K', 3, '2024-11-28', '2024-11-28');
+INSERT INTO `user` (`id`, `name`, `lastname`, `phone_number`, `email`, `username`, `password`, `role`) VALUES
+(12, 'Gytis', 'Pranauskas', '+37069422844', 'worker@gmail.com', 'gpgytis', '$2y$10$leudoEhMvf547SISu6lkueJVdbUBP0VpPWOZk5kCezaXz60zJ7o5q', 2),
+(20, 'Jonas', 'Vadybininkas', '+37077777777', 'vadyb@gmail.com', 'vadyb', '$2y$10$ljTXv8kCvn4kndbyDMNIVuz6v2hrgFfxbjdoh3gW/J5WD0wpsfQ9W', 1),
+(22, 'Jonas', 'Technikas', '+37077777777', 'techn@gamil.com', 'techn', '$2y$10$8ZU6gDOX15g2FpVcddY62u3pXTMqwi3M6Lp93uE2Q1Vbjbmv0Mjbq', 2),
+(23, 'Jonas', 'Vartotojas', '+37077777777', 'vartot@gmail.com', 'vartot', '$2y$10$7Rh2bHW9b34m7mxd1uQdoOgTuc9EX1jwTimNPFgG.A7torZWgkxa2', 3),
+(25, 'Gytis', 'Pranauskas', '+37069422844', 'naujasVartot@gmail.com', 'naujasVartot', '$2y$10$azxU8brNSRA3mUjnNIVsfeIP36DNIVIOAfJ5A4BGs0vuQT/5Rs7O.', 3);
 
 -- --------------------------------------------------------
 
@@ -330,18 +263,11 @@ CREATE TABLE `user_assembly` (
 --
 
 INSERT INTO `user_assembly` (`id`, `fk_belongs_to`, `name`, `price`, `device_id`, `processor_id`, `motherboard_id`, `screen_id`, `memory_id`, `graphics_card_id`, `storage_id`, `cooling_id`, `os_id`) VALUES
-(16, 23, 'Komplektas', 200, 108, 13, 14, 16, 19, 22, 23, 25, 26),
-(17, 23, 'GERAS', 200, 108, 13, 15, 16, 20, 21, 24, 25, 26);
+(18, 25, 'Mano komplektas', 249.99, 112, 13, 15, 16, 20, 21, 23, 25, 26);
 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `computer_types`
---
-ALTER TABLE `computer_types`
-  ADD PRIMARY KEY (`id_computer_types`);
 
 --
 -- Indexes for table `device`
@@ -420,28 +346,22 @@ ALTER TABLE `user_assembly`
 --
 
 --
--- AUTO_INCREMENT for table `computer_types`
---
-ALTER TABLE `computer_types`
-  MODIFY `id_computer_types` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
 -- AUTO_INCREMENT for table `device`
 --
 ALTER TABLE `device`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
 
 --
 -- AUTO_INCREMENT for table `device_parts`
 --
 ALTER TABLE `device_parts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=530;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=630;
 
 --
 -- AUTO_INCREMENT for table `order`
 --
 ALTER TABLE `order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
 
 --
 -- AUTO_INCREMENT for table `order_states`
@@ -453,7 +373,7 @@ ALTER TABLE `order_states`
 -- AUTO_INCREMENT for table `part`
 --
 ALTER TABLE `part`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `part_types`
@@ -471,13 +391,13 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `user_assembly`
 --
 ALTER TABLE `user_assembly`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Constraints for dumped tables
