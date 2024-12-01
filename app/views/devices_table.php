@@ -6,7 +6,7 @@
         <div class="col">
             <label for="filter-options" class="form-label text-white">Rikiuoti pagal</label>
             <select class="form-select bg-dark text-white" id="filter-options" aria-label="Filter Selection">
-                <option selected>Pasirinkite filtravimą</option>
+                <option class="text-secondary" selected value="0">Pasirinkite filtravimą</option>
                 <option value="1">Kaina mažėjimo tvarka</option>
                 <option value="2">Kaina didėjimo tvarka</option>
             </select>
@@ -35,7 +35,7 @@
             <tr>
                 <th>Pavadinimas</th>
                 <th>Konstravimo kaina</th>
-                <th>Veiksmai</th>
+                <?= isUserInRole([1, 2]) ? '' : "<th>Veiksmai</th>" ?>
             </tr>
         </thead>
         <tbody id="device_table_body">
@@ -44,4 +44,7 @@
 </div>
 
 <script src="/assets/js/deviceTableLoad.js"></script>
+<script>
+    const userRole = "<?= getUserRole() ?>";
+</script>
 </body>

@@ -33,9 +33,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   let cachedDevices = []; // Store fetched devices to avoid repeated network calls
 
   sortSelect.addEventListener("change", (event) => {
-    console.log("DIFFERENT SORT ORDER SELECTED");
     sortOrder = event.target.value;
-    fillTable([], sortOrder);
+
+    if (sortOrder > 0) {
+      fillTable([], sortOrder);
+    }
   });
 
   async function fillTable(devices, sortOrder, searchQuery = "") {
@@ -75,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const tableRow = document.createElement("tr");
       const noDevicesCell = document.createElement("td");
       noDevicesCell.setAttribute("colspan", "3");
-      noDevicesCell.textContent = "No devices found matching the search query.";
+      noDevicesCell.textContent = "Nerasta įrenginių.";
 
       tableRow.appendChild(noDevicesCell);
       tableBody.appendChild(tableRow);
@@ -96,23 +98,27 @@ document.addEventListener("DOMContentLoaded", async () => {
       deviceCostCell.textContent = device.device_cost + "€";
       deviceCostCell.className = "text-white";
 
-      // Create a cell for actions
-      const deviceActionsCell = document.createElement("td");
-      const deviceActionsDiv = document.createElement("div");
-      const deviceAction = document.createElement("a");
-      deviceAction.textContent = "Komplektuoti";
-      deviceAction.className = "btn btn-sm btn-primary edit-base-btn";
-      deviceAction.href = `/assemble-device?device_id=${device.device_id}`;
-
-      deviceActionsDiv.className = "btn-group";
-      deviceActionsDiv.setAttribute("role", "group");
-      deviceActionsDiv.appendChild(deviceAction);
-      deviceActionsCell.appendChild(deviceActionsDiv);
-
-      // Append the name, cost, and action cells to the table row
       tableRow.appendChild(deviceNameCell);
       tableRow.appendChild(deviceCostCell);
-      tableRow.appendChild(deviceActionsCell);
+      // Create a cell for actions
+
+      if (userRole != "Vadybininkas" && userRole != "Technikas") {
+        const deviceActionsCell = document.createElement("td");
+        const deviceActionsDiv = document.createElement("div");
+        const deviceAction = document.createElement("a");
+        deviceAction.textContent = "Komplektuoti";
+        deviceAction.className = "btn btn-sm btn-primary edit-base-btn";
+        deviceAction.href = `/assemble-device?device_id=${device.device_id}`;
+
+        deviceActionsDiv.className = "btn-group";
+        deviceActionsDiv.setAttribute("role", "group");
+        deviceActionsDiv.appendChild(deviceAction);
+        deviceActionsCell.appendChild(deviceActionsDiv);
+
+        tableRow.appendChild(deviceActionsCell);
+      }
+
+      // Append the name, cost, and action cells to the table row
 
       // Append the complete table row to the table body
       tableBody.appendChild(tableRow);

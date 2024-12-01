@@ -148,7 +148,7 @@ class PartController
                 header('Content-Type: application/json');
                 echo json_encode([
                     'success' => true,
-                    'message' => 'Bazė sėkmingai sukurta',
+                    'message' => 'Detalė sėkmingai sukurta',
                     // Optional: include any additional data
                 ]);
 

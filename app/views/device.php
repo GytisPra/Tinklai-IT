@@ -47,9 +47,9 @@
                     </ol>
                 </div>
             </div>
-            <div class="row">
+            <!-- <div class="row">
                 <div class="mb-3 col">something more</div>
-            </div>
+            </div> -->
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary"><?= isset($device) ? 'Atnaujinti' : 'Pridėti' ?></button>
             </div>

@@ -40,8 +40,8 @@ class User
 
         // Prepare and execute the SQL query to insert the user into the database
         $stmt = $this->mysqli->prepare(
-            "INSERT INTO user (name, lastname, phone_number, email, username, password, role, createdAt, updatedAt) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO user (name, lastname, phone_number, email, username, password, role) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)"
         );
 
         // Check if the statement was prepared successfully
@@ -50,7 +50,7 @@ class User
         }
 
         // Bind the parameters to the prepared statement
-        $stmt->bind_param('ssssssiss', $name, $lastname, $phone_number, $email, $username, $hashedPassword, $role, $currDate, $currDate);
+        $stmt->bind_param('ssssssi', $name, $lastname, $phone_number, $email, $username, $hashedPassword, $role);
 
 
         if ($stmt->execute()) {

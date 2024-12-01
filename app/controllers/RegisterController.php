@@ -43,7 +43,6 @@ class RegisterController
                 echo json_encode([
                     'success' => true,
                     'message' => 'Vartotojas sėkmingai sukurtas',
-                    // Optional: include any additional data
                 ]);
                 exit;
             } else {

@@ -24,7 +24,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         })
           .then((response) => {
             if (!response.ok) {
-              throw new Error("Klaida pašalinant įrenginį prieinamumą");
+              showError(
+                "Įrenginio pašalinti negalima, kadangi jis yra naudojamas komplekte"
+              );
+              throw new Error("Klaida pašalinant įrenginį");
             } else {
               // Reload page to update table
               location.reload();
@@ -60,4 +63,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       deleteBase(deviceId);
     });
   });
+
+  function showError(msg) {
+    const errorContainer = document.getElementById("errorContainer");
+    errorContainer.textContent = msg;
+    errorContainer.style.display = "flex";
+  }
+  function clearError() {
+    const errorContainer = document.getElementById("errorContainer");
+    errorContainer.textContent = "";
+    errorContainer.style.display = "none";
+  }
 });

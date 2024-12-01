@@ -35,7 +35,9 @@
 
     <div class="container">
         <h2 class="mt-2 mb-4">Peržiūrėti mano įrenginius</h2>
-
+        <div class="row justify-content-center">
+            <div class="col alert alert-danger mt-3" style="display: none;" id="errorContainer"></div>
+        </div>
         <div class="table-responsive">
             <table class="table table-striped table-hover table-bordered">
                 <thead class="table-dark">

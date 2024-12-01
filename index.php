@@ -30,10 +30,10 @@ require_once 'app/utils/utils.php';
 
 
 // Create a mysqli connection for database
-$db_host = getenv('DB_HOST');
-$db_user = getenv('DB_USER');
-$db_pass = getenv('DB_PASSWORD');
-$db_name = getenv('DB_NAME');
+$db_host = 'localhost';
+$db_user = 'root';
+$db_pass = '';
+$db_name = 'it-project';
 
 $mysqli = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
