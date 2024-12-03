@@ -23,7 +23,7 @@
                 <div class="mb-3 col-2">
                     <label for="partType" class="form-label text-white text-nowrap">Pasirinkti detalės tipą</label>
                     <select class="form-select bg-dark text-white" name="part_type" id="partType" aria-label="Motherboard selection">
-                        <option value="0" class="text-secondary" selected>Pasirinkite tipą</option>
+                        <option value="-1" class="text-secondary" selected>Pasirinkite tipą</option>
                         <option value="1">Procesorius</option>
                         <option value="2">Motininė plokštė</option>
                         <option value="3">Ekranas</option>

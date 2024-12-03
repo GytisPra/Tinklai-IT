@@ -8,12 +8,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       totalPrice = deviceData["device_cost"];
 
-      // Use Promise.all to handle multiple async operations
       const pricePromises = Array.from(radios)
         .filter((radio) => radio.checked)
         .map(async (radio) => {
           const partId = radio.value;
-          console.log(partId, "IS checked");
           const priceData = await getPartPrice(partId);
           return parseFloat(priceData.price);
         });
@@ -133,11 +131,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Update price input field
   function updatePrice() {
     const priceInput = document.getElementById("price");
-    console.log("UPDATING PRICE to", totalPrice);
-
-    if (assemblyData) {
-      // if assemblyData is provided then check all of the radios and update the price
-    }
 
     priceInput.value = totalPrice.toFixed(2); // Format to 2 decimal places
   }

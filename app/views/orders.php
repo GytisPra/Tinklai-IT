@@ -73,7 +73,7 @@
                             <th>Užsakė</th>
                         <?php endif; ?>
                         <th>Pavadinimas</th>
-                        <th>Pilna kaina</th>
+                        <th>Detalių kaina</th>
                         <th>Statusas</th>
                         <th>Veiksmai</th>
                     </tr>

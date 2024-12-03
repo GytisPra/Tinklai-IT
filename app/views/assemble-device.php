@@ -41,7 +41,6 @@
                             required
                             value="<?= isset($assembly) ? $assembly['name'] : '' ?>" />
                     </div>
-
                 </div>
             </div>
             <div class="row">

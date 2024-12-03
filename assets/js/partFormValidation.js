@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const requiredInputs = [
       { id: "partType", message: "Detalės tipas turi būti pasirinktas." },
       { id: "amount", message: "Įveskite kiekį." },
-      { id: "price", message: "Talpa turi būti pasirinkta." },
+      { id: "price", message: "Įveskite kainą." },
       { id: "name", message: "Įveskite pavadinimą." },
     ];
 
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (isNaN(value)) {
           errorMesseges[i] = "Kaina turi būti skaičius";
           i++;
-        } else if (value <= 0) {
+        } else if (value < 0) {
           errorMesseges[i] = "Kaina turi būti teigiama";
           i++;
         }
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
 
-      if (!input || !input.value || input.value === "0") {
+      if (!input || !input.value || input.value < "0") {
         errorMesseges[i] = part.message;
         i++;
       }

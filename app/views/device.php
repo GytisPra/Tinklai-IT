@@ -11,7 +11,6 @@
 
 <body data-bs-theme="dark" class="text-white">
     <?php include 'app/views/header.php'; ?>
-
     <div class="container">
         <h2 class="mt-2 mb-4"><?= isset($device) ? 'Redaguoti įrenginį' : 'Aprašyti įrenginį' ?></h2>
         <form method="POST" id="deviceForm" action="<?= isset($device) ? '/edit-device' : '/create-device' ?>">
@@ -47,9 +46,6 @@
                     </ol>
                 </div>
             </div>
-            <!-- <div class="row">
-                <div class="mb-3 col">something more</div>
-            </div> -->
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary"><?= isset($device) ? 'Atnaujinti' : 'Pridėti' ?></button>
             </div>

@@ -50,47 +50,16 @@ document.addEventListener("DOMContentLoaded", async () => {
           }" ${isChecked ? "checked" : ""}/>
             <label id="${part.id}_label" class="form-check-label" for="${
             part.id
-          }">${part.name}</label>
+          }">${part.name} (${part.price} €)</label>
           </div>`;
         });
       }
-
-      //       <div class="form-check">
-      //   <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-      //   <label class="form-check-label" for="flexCheckDefault">
-      //     Default checkbox
-      //   </label>
-      // </div>
 
       // Set the listItem's innerHTML after all the content has been prepared
       listItem.innerHTML = innerHTMLContent;
 
       partList.appendChild(listItem);
     });
-  }
-
-  function updateStorageBadge(selectedOption, storageBadge) {
-    const storageLeft =
-      parseInt(selectedOption.getAttribute("data-storage"), 10) || 0;
-
-    // Update the badge text
-    storageBadge.textContent = storageLeft;
-
-    // Update the badge color based on the amount
-    storageBadge.classList.remove(
-      "text-bg-primary",
-      "text-bg-success",
-      "text-bg-warning",
-      "text-bg-danger"
-    );
-
-    if (storageLeft < 5) {
-      storageBadge.classList.add("text-bg-danger"); // Red for less than 5
-    } else if (storageLeft <= 10) {
-      storageBadge.classList.add("text-bg-warning"); // Yellow for 5-10
-    } else {
-      storageBadge.classList.add("text-bg-success"); // Green for more than 10
-    }
   }
 
   const selectConfig = [

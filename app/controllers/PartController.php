@@ -138,7 +138,7 @@ class PartController
         try {
             $result = $this->partModel->create(
                 $_POST['name'],
-                intval($_POST['price']),
+                floatval($_POST['price']),
                 intval($_POST['amount']),
                 intval($_POST['part_type'])
             );

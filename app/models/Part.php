@@ -131,7 +131,7 @@ class Part
 
         // Bind the parameters to the prepared statement
         $stmt->bind_param(
-            'siii',
+            'sdii',
             $name,
             $price,
             $left_in_storage,
