@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 02, 2024 at 12:30 AM
+-- Generation Time: Dec 03, 2024 at 03:24 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,8 +39,9 @@ CREATE TABLE `device` (
 --
 
 INSERT INTO `device` (`id`, `name`, `construction_cost`, `fk_created_by`) VALUES
-(112, 'Žaidimų kompiuteris', 249.99, 22),
-(113, 'Multimedijos kompiuteris', 289.99, 22);
+(112, 'Žaidimų kompiuteris', 299.99, 22),
+(113, 'Multimedijos kompiuteris', 289.99, 22),
+(114, 'Darbo kompiuteris', 299.59, 22);
 
 -- --------------------------------------------------------
 
@@ -59,28 +60,57 @@ CREATE TABLE `device_parts` (
 --
 
 INSERT INTO `device_parts` (`id`, `fk_device_id`, `fk_part_id`) VALUES
-(608, 112, 15),
-(609, 112, 20),
-(610, 112, 23),
-(611, 112, 24),
-(612, 112, 13),
-(613, 112, 21),
-(614, 112, 22),
-(615, 112, 25),
-(616, 112, 27),
-(617, 112, 16),
-(618, 112, 26),
-(619, 113, 14),
-(620, 113, 18),
-(621, 113, 20),
-(622, 113, 23),
-(623, 113, 24),
-(624, 113, 13),
-(625, 113, 21),
-(626, 113, 22),
-(627, 113, 27),
-(628, 113, 16),
-(629, 113, 26);
+(705, 112, 14),
+(706, 112, 15),
+(707, 112, 18),
+(708, 112, 20),
+(709, 112, 74),
+(710, 112, 75),
+(711, 112, 56),
+(712, 112, 57),
+(713, 112, 21),
+(714, 112, 22),
+(715, 112, 70),
+(716, 112, 71),
+(717, 112, 72),
+(718, 112, 25),
+(719, 112, 27),
+(720, 112, 16),
+(721, 112, 63),
+(722, 112, 26),
+(723, 114, 62),
+(724, 114, 17),
+(725, 114, 20),
+(726, 114, 75),
+(727, 114, 77),
+(728, 114, 13),
+(729, 114, 56),
+(730, 114, 41),
+(731, 114, 72),
+(732, 114, 73),
+(733, 114, 25),
+(734, 114, 63),
+(735, 114, 76),
+(736, 114, 26),
+(737, 114, 64),
+(738, 113, 14),
+(739, 113, 61),
+(740, 113, 18),
+(741, 113, 20),
+(742, 113, 23),
+(743, 113, 24),
+(744, 113, 74),
+(745, 113, 13),
+(746, 113, 56),
+(747, 113, 21),
+(748, 113, 22),
+(749, 113, 70),
+(750, 113, 25),
+(751, 113, 27),
+(752, 113, 16),
+(753, 113, 60),
+(754, 113, 26),
+(755, 113, 69);
 
 -- --------------------------------------------------------
 
@@ -102,7 +132,11 @@ CREATE TABLE `order` (
 
 INSERT INTO `order` (`id`, `ordered_by`, `total_price`, `order_status`, `assembly_id`) VALUES
 (124, 25, 1127, 2, 18),
-(125, 25, 1127, 4, 18);
+(125, 25, 1127, 4, 18),
+(126, 23, 1127, 4, 19),
+(127, 23, 2830, 2, 19),
+(128, 23, 938, 2, 20),
+(129, 23, 715, 2, 21);
 
 -- --------------------------------------------------------
 
@@ -134,7 +168,7 @@ INSERT INTO `order_states` (`id`, `name`) VALUES
 CREATE TABLE `part` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `price` decimal(10,0) NOT NULL,
+  `price` double(10,2) NOT NULL,
   `left_in_storage` int(11) NOT NULL,
   `part_type` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -144,24 +178,41 @@ CREATE TABLE `part` (
 --
 
 INSERT INTO `part` (`id`, `name`, `price`, `left_in_storage`, `part_type`) VALUES
-(13, 'Core i7 14790F', 13, 13, 1),
-(14, 'Gigabyte GA-A320M-S2H', 15, 14, 2),
-(15, 'Asus Z170 Pro Gaming', 18, 17, 2),
-(16, 'LCD FHD 1080p', 200, 11, 3),
-(17, '8GB DDR4', 50, 14, 4),
-(18, '16GB DDR5', 1113, 13, 4),
-(19, '8GB DDR5', 550, 17, 4),
-(20, '16GB DDR5', 442, 2, 4),
-(21, 'GeForce RTX 4080', 14, 1, 5),
-(22, 'GeForce RTX 4090', 178, 5, 5),
-(23, 'Crucial T705 2TB', 180, 4, 6),
-(24, 'MSI SPATIUM M580 FROZR 2TB', 60, 3, 6),
-(25, 'Oras', 80, 8, 7),
-(26, 'Windows 11', 180, 9, 8),
-(27, 'Skystis', 90, 10, 7),
-(41, 'Integruota', 1, 1000, 5),
-(43, 'SSD 256GB', 49, 10, 6),
-(56, 'Core i5 14600K', 257, 5, 1);
+(13, 'Core i7 14790F', 625.00, 13, 1),
+(14, 'Gigabyte GA-A320M-S2H', 105.54, 14, 2),
+(15, 'Asus Z170 Pro Gaming', 158.59, 17, 2),
+(16, 'ASUS ROG Swift Pro PG248QP 180 Hz', 218.90, 11, 3),
+(17, '8GB DDR4', 17.99, 14, 4),
+(18, '16GB DDR5', 58.99, 13, 4),
+(19, '8GB DDR5', 29.99, 17, 4),
+(20, '16GB DDR4', 35.50, 2, 4),
+(21, 'GeForce RTX 4080 16GB DDR6', 1190.90, 1, 5),
+(22, 'GeForce RTX 4090 24GB DDR6', 2260.20, 5, 5),
+(23, 'Crucial T705 2TB', 380.13, 4, 6),
+(24, 'MSI SPATIUM M580 FROZR 2TB', 331.31, 3, 6),
+(25, 'Oras', 81.00, 8, 7),
+(26, 'Windows 11', 139.99, 9, 8),
+(27, 'Skystis', 350.59, 10, 7),
+(41, 'Integruota', 0.00, 1000, 5),
+(56, 'Core i5 14600K', 257.88, 5, 1),
+(57, 'AMD Ryzen 7 5800X', 188.00, 15, 1),
+(58, 'AMD Ryzen 5 5500', 77.00, 15, 1),
+(59, 'Core i3 13100F', 86.00, 9, 1),
+(60, 'AOC Q27B3MA 27\' VA, QHD', 149.00, 9, 3),
+(61, 'MSI PRO H610M-G', 93.00, 10, 2),
+(62, 'GIGABYTE Intel H470 Express LGA1200', 63.36, 10, 2),
+(63, 'AOC Gaming 24G4XE 23.8\"', 108.00, 10, 3),
+(64, 'Windows 10', 100.55, 10, 8),
+(65, 'Ubuntu', 0.00, 1000, 8),
+(69, 'macOS', 50.99, 1000, 8),
+(70, 'GeForce RTX 3070 8GB DDR6', 435.55, 15, 5),
+(71, 'AMD Radeon RX 7900 XTX 24GB GDDR6', 939.19, 15, 5),
+(72, 'RTX 4060 8GB DDR6', 201.59, 15, 5),
+(73, 'MSI GeForce RTX 3050  6GB DDR6', 179.08, 15, 5),
+(74, 'Samsung SSD 980 M.2 1TB', 83.56, 10, 6),
+(75, 'Gigabyte Gen4 4000E M.2 1TB', 77.99, 10, 6),
+(76, 'Samsung Odyssey G5 165hz', 177.11, 10, 3),
+(77, 'Dahua C900 M.2 512GB', 47.11, 10, 6);
 
 -- --------------------------------------------------------
 
@@ -263,7 +314,10 @@ CREATE TABLE `user_assembly` (
 --
 
 INSERT INTO `user_assembly` (`id`, `fk_belongs_to`, `name`, `price`, `device_id`, `processor_id`, `motherboard_id`, `screen_id`, `memory_id`, `graphics_card_id`, `storage_id`, `cooling_id`, `os_id`) VALUES
-(18, 25, 'Mano komplektas', 249.99, 112, 13, 15, 16, 20, 21, 23, 25, 26);
+(18, 25, 'Mano komplektas', 249.99, 112, 13, 15, 16, 20, 21, 23, 25, 26),
+(19, 23, 'Mano komplektas', 249.99, 112, 13, 15, 16, 20, 21, 23, 25, 26),
+(20, 23, 'Mano žaidimų kompiuteris', 299.99, 112, 57, 14, 63, 20, 72, 75, 25, 26),
+(21, 23, 'Mano darbo kompiuteris', 299.59, 114, 56, 62, 63, 17, 41, 77, 25, 26);
 
 --
 -- Indexes for dumped tables
@@ -349,19 +403,19 @@ ALTER TABLE `user_assembly`
 -- AUTO_INCREMENT for table `device`
 --
 ALTER TABLE `device`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 
 --
 -- AUTO_INCREMENT for table `device_parts`
 --
 ALTER TABLE `device_parts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=630;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=756;
 
 --
 -- AUTO_INCREMENT for table `order`
 --
 ALTER TABLE `order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
 
 --
 -- AUTO_INCREMENT for table `order_states`
@@ -373,7 +427,7 @@ ALTER TABLE `order_states`
 -- AUTO_INCREMENT for table `part`
 --
 ALTER TABLE `part`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `part_types`
@@ -397,7 +451,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `user_assembly`
 --
 ALTER TABLE `user_assembly`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Constraints for dumped tables
